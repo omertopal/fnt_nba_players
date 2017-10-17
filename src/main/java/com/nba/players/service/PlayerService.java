@@ -1,35 +1,46 @@
 package com.nba.players.service;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nba.players.bean.Player;
+import com.nba.players.dao.IPlayerDAO;
+import com.nba.players.entity.Player;
+
 
 @Service
 public class PlayerService implements IPlayerService {
+	@Autowired
+	private IPlayerDAO playerDAO;
+	
+	@Override
+	public List<Player> getAllPlayers() {
+		return playerDAO.getAllPlayers();
+	}
 
-    private final ArrayList<Player> players;
-
-	public PlayerService() {
-
-		players = new ArrayList<Player>();
-    }
-
-    @Override
-    public ArrayList<Player> findAll() {
-  
-        try {        	 
-        	players.clear();
-        	Player player = new Player("Ommer" );        	
-        	players.add(player);        	
-            
-        }catch (Exception ex) {
-            Logger.getLogger(PlayerService.class.getName()).log(Level.SEVERE, null, ex);
+	@Override
+	public Player getPlayerById(int id) {
+		Player obj = playerDAO.getPlayerById(id);
+		return obj;
+	}
+	
+	@Override
+	public synchronized boolean addPlayer(Player player){
+        if (playerDAO.playerExists(player.getName(), player.getTeam())) {
+            return false;
+        } else {
+            playerDAO.addPlayer(player);
+            return true;
         }
+	}
+	@Override
+	public void updatePlayer(Player player) {
+		playerDAO.updatePlayer(player);
+	}
+	@Override
+	public void deletePlayer(int playerId) {
+		playerDAO.deletePlayer(playerId);
+	}
 
-        return players;
-    }
 }

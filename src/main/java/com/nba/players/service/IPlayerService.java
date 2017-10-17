@@ -1,10 +1,13 @@
 package com.nba.players.service;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import com.nba.players.bean.Player;
+import com.nba.players.entity.Player;
 
 public interface IPlayerService {
-    
-    public ArrayList<Player> findAll();
+	List<Player> getAllPlayers();
+	Player getPlayerById(int id);
+	boolean addPlayer(Player player);
+    void updatePlayer(Player player);
+    void deletePlayer(int playerId);
 }
