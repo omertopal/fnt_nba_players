@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nba.players.entity.Player;
 
+
 @Transactional
 @Repository
 public class PlayerDAO implements IPlayerDAO {
@@ -35,7 +36,7 @@ public class PlayerDAO implements IPlayerDAO {
 		String hql = "FROM MyPlayers ORDER BY id";
 		return (List<Player>) entityManager.createQuery(hql).getResultList();
 	}
-
+	
 	@Override
 	public void addPlayer(Player player) {
 		entityManager.persist(player);
