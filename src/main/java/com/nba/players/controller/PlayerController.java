@@ -20,7 +20,7 @@ import com.nba.players.entity.Player;
 import com.nba.players.service.IPlayerService;
 
 @Controller
-@RequestMapping("player")
+@RequestMapping("players")
 public class PlayerController {
 	@Autowired
 	private IPlayerService playerService;
@@ -30,11 +30,18 @@ public class PlayerController {
 		Player player = playerService.getPlayerById(id);
 		return new ResponseEntity<Player>(player, HttpStatus.OK);
 	}
-	@GetMapping("players")
+	@GetMapping("allPlayers")
 	public ResponseEntity<List<Player>> getAllPlayers() {
 		List<Player> list = playerService.getAllPlayers();
 		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
 	}
+	
+	@GetMapping("myPlayers")
+	public ResponseEntity<List<Player>> getMyPlayers() {
+		List<Player> list = playerService.getMyPlayers();
+		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
+	}
+	
 	@PostMapping("player")
 	public ResponseEntity<Void> addPlayer(@RequestBody Player player, UriComponentsBuilder builder) {
                 boolean flag = playerService.addPlayer(player);

@@ -1,14 +1,15 @@
-package com.nba.players.service;
+package com.nba.players.dao;
 
 import java.util.List;
 
 import com.nba.players.entity.Player;
 
-public interface IPlayerService {
+public interface IPlayerDAO {
 	List<Player> getAllPlayers();
-	List<Player> getMyPlayers();
+	public List<Player> getMyPlayers();	
 	Player getPlayerById(int id);
-	boolean addPlayer(Player player);
+	void addPlayer(Player player);
     void updatePlayer(Player player);
     void deletePlayer(int playerId);
+    boolean playerExists(String title, String category);
 }

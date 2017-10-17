@@ -18,6 +18,11 @@ public class PlayerService implements IPlayerService {
 	public List<Player> getAllPlayers() {
 		return playerDAO.getAllPlayers();
 	}
+	
+	@Override
+	public List<Player> getMyPlayers() {
+		return playerDAO.getMyPlayers();
+	}
 
 	@Override
 	public Player getPlayerById(int id) {
