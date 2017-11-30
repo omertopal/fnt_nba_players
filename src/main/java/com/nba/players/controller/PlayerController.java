@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.nba.players.entity.MyPlayers;
 import com.nba.players.entity.Player;
 import com.nba.players.service.IPlayerService;
 
@@ -37,9 +38,9 @@ public class PlayerController {
 	}
 	
 	@GetMapping("myPlayers")
-	public ResponseEntity<List<Player>> getMyPlayers() {
-		List<Player> list = playerService.getMyPlayers();
-		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
+	public ResponseEntity<List<MyPlayers>> getMyPlayers() {
+		List<MyPlayers> list = playerService.getMyPlayers();
+		return new ResponseEntity<List<MyPlayers>>(list, HttpStatus.OK);
 	}
 	
 	@PostMapping("player")

@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nba.players.entity.MyPlayers;
 import com.nba.players.entity.Player;
 
 
@@ -32,9 +33,9 @@ public class PlayerDAO implements IPlayerDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Player> getMyPlayers() {
-		String hql = "FROM MyPlayers ORDER BY id";
-		return (List<Player>) entityManager.createQuery(hql).getResultList();
+	public List<MyPlayers> getMyPlayers() {
+		String hql = "FROM MyPlayers ORDER BY avgPts desc";
+		return (List<MyPlayers>) entityManager.createQuery(hql).getResultList();
 	}
 	
 	@Override

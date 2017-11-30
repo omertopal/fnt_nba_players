@@ -8,20 +8,20 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nba.players.entity.Schedule;
+import com.nba.players.entity.GameDates;
 
 @Transactional
 @Repository
-public class ScheduleDAO implements IScheduleDAO {
+public class GameDatesDAO implements IGameDatesDAO {
 	
 	@PersistenceContext	
 	private EntityManager entityManager;
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Schedule> getAllSchedule() {
-		String hql = "FROM Schedule where match is not null and gameDate >= trim(sysdate-(1/3)) ORDER BY gameDate,team";
-		return (List<Schedule>) entityManager.createQuery(hql).getResultList();
+	public List<GameDates> getGameDates(){
+		String hql = "FROM GameDates where gameDate >= trim(sysdate-(1/3)) ORDER BY gameDate ";
+		return (List<GameDates>) entityManager.createQuery(hql).getResultList();
 	}
 
 }

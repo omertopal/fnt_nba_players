@@ -1,6 +1,7 @@
 package com.nba.players.entity;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,6 +46,9 @@ public class MyPlayers implements Serializable {
 	
 	@Column(name="IS_C")	
 	private int isC;
+	
+	@Column(name="INJ_END")	
+	private Date injEnd;
 
 	public int getId() {
 		return id;
@@ -124,5 +128,13 @@ public class MyPlayers implements Serializable {
 
 	public void setSira(int sira) {
 		this.sira = sira;
+	}
+
+	public Date getInjEnd() {
+		return injEnd;
+	}
+
+	public void setInjEnd(Date injEnd) {
+		this.injEnd = injEnd;
 	}
 }

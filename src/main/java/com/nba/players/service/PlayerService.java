@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nba.players.dao.IPlayerDAO;
+import com.nba.players.entity.MyPlayers;
 import com.nba.players.entity.Player;
 
 
@@ -20,7 +21,7 @@ public class PlayerService implements IPlayerService {
 	}
 	
 	@Override
-	public List<Player> getMyPlayers() {
+	public List<MyPlayers> getMyPlayers() {
 		return playerDAO.getMyPlayers();
 	}
 
