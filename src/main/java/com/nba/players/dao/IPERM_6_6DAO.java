@@ -5,5 +5,5 @@ import java.util.List;
 import com.nba.players.model.PermModel;
 
 public interface IPERM_6_6DAO {
-	List<PermModel> getAllPERM_6_6();
+	List<PermModel> getAllPerm();
 }

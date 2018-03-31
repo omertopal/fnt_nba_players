@@ -9,6 +9,8 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nba.players.common.CommonUtils;
+import com.nba.players.entity.PERM_6_1;
 import com.nba.players.entity.PERM_6_8;
 import com.nba.players.model.PermModel;
 
@@ -21,24 +23,14 @@ public class PERM_6_8DAO implements IPERM_6_8DAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PermModel> getAllPERM_6_8() {
+	public List<PermModel> getAllPerm() {
 		String hql = "FROM PERM_6_8 order by decode(pg,0,99,pg),decode(sg,0,99,sg),decode(sf,0,99,sf),decode(pf,0,99,pf),decode(c,0,99,c),decode(ut,0,99,ut) ";
-		return mapFromPERM_6_8((List<PERM_6_8>) entityManager.createQuery(hql).getResultList());
+		try {
+			return CommonUtils.mapFromPermEntity(PERM_6_8.class,(ArrayList<PERM_6_8>) entityManager.createQuery(hql).getResultList());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
-	public List<PermModel> mapFromPERM_6_8 (List<PERM_6_8> permutations){
-		List<PermModel> resultMap = new ArrayList<>();
-		for (PERM_6_8 curInstance: permutations) {
-			PermModel currModel = new PermModel();
-			currModel.setPg(curInstance.getPg());
-			currModel.setSg(curInstance.getSg());
-			currModel.setSf(curInstance.getSf());
-			currModel.setPf(curInstance.getPf());
-			currModel.setC(curInstance.getC());
-			currModel.setUt(curInstance.getUt());
-			currModel.setId(curInstance.getId());
-			resultMap.add(currModel);
-		}
-		return resultMap;
-	}
 }
