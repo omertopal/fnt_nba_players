@@ -1,9 +1,9 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.List;
 
-import com.nba.players.entity.MyPlayers;
-import com.nba.players.entity.Player;
+import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Player;
 
 public interface IPlayerDAO {
 	List<Player> getAllPlayers();

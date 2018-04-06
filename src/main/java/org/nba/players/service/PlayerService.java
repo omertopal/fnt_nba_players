@@ -1,13 +1,12 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.List;
 
+import org.nba.players.dao.IPlayerDAO;
+import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.nba.players.dao.IPlayerDAO;
-import com.nba.players.entity.MyPlayers;
-import com.nba.players.entity.Player;
 
 
 @Service
@@ -47,6 +46,11 @@ public class PlayerService implements IPlayerService {
 	@Override
 	public void deletePlayer(int playerId) {
 		playerDAO.deletePlayer(playerId);
+	}
+
+	public void evictCache() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

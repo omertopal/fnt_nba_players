@@ -1,11 +1,11 @@
-package com.nba.players.common;
+package org.nba.players.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nba.players.model.PermModel;
+import org.nba.players.model.PermModel;
 
 public class CommonUtils {	
 		

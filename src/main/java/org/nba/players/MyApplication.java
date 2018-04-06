@@ -1,4 +1,4 @@
-package com.nba.players;
+package org.nba.players;
 
 
 import org.springframework.boot.SpringApplication;

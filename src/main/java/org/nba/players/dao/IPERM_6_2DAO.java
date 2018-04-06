@@ -1,8 +1,8 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.List;
 
-import com.nba.players.model.PermModel;
+import org.nba.players.model.PermModel;
 
 public interface IPERM_6_2DAO {
 	List<PermModel> getAllPerm();

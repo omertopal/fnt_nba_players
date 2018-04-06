@@ -1,4 +1,4 @@
-package com.nba.players.model;
+package org.nba.players.model;
 
 public class PermModel {
 	

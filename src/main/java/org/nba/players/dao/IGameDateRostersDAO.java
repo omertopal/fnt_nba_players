@@ -1,8 +1,8 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.List;
 
-import com.nba.players.model.GameDateRosterModel;
+import org.nba.players.model.GameDateRosterModel;
 
 public interface IGameDateRostersDAO {
 	public void persist(GameDateRosterModel roster);

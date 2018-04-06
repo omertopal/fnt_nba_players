@@ -1,9 +1,9 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.List;
 
-import com.nba.players.entity.MyPlayers;
-import com.nba.players.entity.Player;
+import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Player;
 
 public interface IPlayerService {
 	List<Player> getAllPlayers();

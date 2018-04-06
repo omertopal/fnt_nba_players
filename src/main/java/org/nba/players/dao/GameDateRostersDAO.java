@@ -1,4 +1,4 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -9,11 +9,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.nba.players.entity.GameDateRosters;
+import org.nba.players.model.GameDateRosterModel;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.nba.players.entity.GameDateRosters;
-import com.nba.players.model.GameDateRosterModel;
 
 @Transactional
 @Repository

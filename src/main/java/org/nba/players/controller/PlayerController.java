@@ -1,7 +1,10 @@
-package com.nba.players.controller;
+package org.nba.players.controller;
 
 import java.util.List;
 
+import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Player;
+import org.nba.players.service.IPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,13 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.nba.players.entity.MyPlayers;
-import com.nba.players.entity.Player;
-import com.nba.players.service.IPlayerService;
-
 @Controller
 @RequestMapping("players")
-public class PlayerController {
+public class PlayerController extends NbaController{
 	@Autowired
 	private IPlayerService playerService;
 	

@@ -1,4 +1,4 @@
-package com.nba.players.entity;
+package org.nba.players.entity;
 
 import java.io.Serializable;
 import java.sql.Date;

@@ -1,8 +1,8 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.List;
 
-import com.nba.players.entity.Team;
+import org.nba.players.entity.Team;
 
 public interface ITeamDAO {
 	List<Team> getAllTeams();

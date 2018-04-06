@@ -1,15 +1,14 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Player;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.nba.players.entity.MyPlayers;
-import com.nba.players.entity.Player;
 
 
 @Transactional

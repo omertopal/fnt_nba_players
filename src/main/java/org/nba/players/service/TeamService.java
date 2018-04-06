@@ -1,12 +1,11 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.List;
 
+import org.nba.players.dao.ITeamDAO;
+import org.nba.players.entity.Team;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.nba.players.dao.ITeamDAO;
-import com.nba.players.entity.Team;
 
 @Service
 public class TeamService implements ITeamService {

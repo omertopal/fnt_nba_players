@@ -1,4 +1,4 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,12 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.nba.players.common.CommonUtils;
+import org.nba.players.entity.PERM_6_1;
+import org.nba.players.entity.PERM_6_2;
+import org.nba.players.model.PermModel;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.nba.players.common.CommonUtils;
-import com.nba.players.entity.PERM_6_1;
-import com.nba.players.entity.PERM_6_2;
-import com.nba.players.model.PermModel;
 
 @Transactional
 @Repository

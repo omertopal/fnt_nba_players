@@ -1,8 +1,8 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.List;
 
-import com.nba.players.entity.Schedule;
+import org.nba.players.entity.Schedule;
 
 public interface IScheduleService {
 	List<Schedule> getAllSchedule();

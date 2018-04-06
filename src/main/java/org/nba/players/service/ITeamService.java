@@ -1,8 +1,8 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.List;
 
-import com.nba.players.entity.Team;
+import org.nba.players.entity.Team;
 
 public interface ITeamService {
 	List<Team> getAllTeams();

@@ -1,16 +1,15 @@
-package com.nba.players.controller;
+package org.nba.players.controller;
 
 import java.util.List;
 
+import org.nba.players.entity.Team;
+import org.nba.players.service.ITeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.nba.players.entity.Team;
-import com.nba.players.service.ITeamService;
 
 @Controller
 @RequestMapping("teams")

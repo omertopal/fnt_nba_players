@@ -1,4 +1,4 @@
-package com.nba.players.model;
+package org.nba.players.model;
 
 import java.sql.Date;
 

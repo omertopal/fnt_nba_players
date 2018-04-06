@@ -1,8 +1,8 @@
-package com.nba.players.dao;
+package org.nba.players.dao;
 
 import java.util.List;
 
-import com.nba.players.entity.GameDates;
+import org.nba.players.entity.GameDates;
 
 public interface IGameDatesDAO {
 	List<GameDates> getGameDates();

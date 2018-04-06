@@ -1,8 +1,8 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.List;
 
-import com.nba.players.entity.GameDates;
+import org.nba.players.entity.GameDates;
 
 public interface IGameDatesService {
 	List<GameDates> getGameDates();

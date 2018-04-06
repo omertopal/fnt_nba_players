@@ -1,8 +1,8 @@
-package com.nba.players.intf;
+package org.nba.players.intf;
 
 import java.util.Date;
 
-import com.nba.players.entity.Schedule;
+import org.nba.players.entity.Schedule;
 
 @FunctionalInterface
 public interface CompareScheduleDate {	

@@ -1,35 +1,34 @@
-package com.nba.players.service;
+package org.nba.players.service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.nba.players.dao.IGameDateRostersDAO;
+import org.nba.players.dao.IGameDatesDAO;
+import org.nba.players.dao.IPERM_6_10DAO;
+import org.nba.players.dao.IPERM_6_11DAO;
+import org.nba.players.dao.IPERM_6_12DAO;
+import org.nba.players.dao.IPERM_6_1DAO;
+import org.nba.players.dao.IPERM_6_2DAO;
+import org.nba.players.dao.IPERM_6_3DAO;
+import org.nba.players.dao.IPERM_6_4DAO;
+import org.nba.players.dao.IPERM_6_5DAO;
+import org.nba.players.dao.IPERM_6_6DAO;
+import org.nba.players.dao.IPERM_6_7DAO;
+import org.nba.players.dao.IPERM_6_8DAO;
+import org.nba.players.dao.IPERM_6_9DAO;
+import org.nba.players.dao.IPlayerDAO;
+import org.nba.players.dao.IScheduleDAO;
+import org.nba.players.entity.GameDates;
+import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Schedule;
+import org.nba.players.model.GameDateRosterModel;
+import org.nba.players.model.MyPlayersModel;
+import org.nba.players.model.PermModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.nba.players.dao.IGameDateRostersDAO;
-import com.nba.players.dao.IGameDatesDAO;
-import com.nba.players.dao.IPERM_6_10DAO;
-import com.nba.players.dao.IPERM_6_11DAO;
-import com.nba.players.dao.IPERM_6_12DAO;
-import com.nba.players.dao.IPERM_6_1DAO;
-import com.nba.players.dao.IPERM_6_2DAO;
-import com.nba.players.dao.IPERM_6_3DAO;
-import com.nba.players.dao.IPERM_6_4DAO;
-import com.nba.players.dao.IPERM_6_5DAO;
-import com.nba.players.dao.IPERM_6_6DAO;
-import com.nba.players.dao.IPERM_6_7DAO;
-import com.nba.players.dao.IPERM_6_8DAO;
-import com.nba.players.dao.IPERM_6_9DAO;
-import com.nba.players.dao.IPlayerDAO;
-import com.nba.players.dao.IScheduleDAO;
-import com.nba.players.entity.GameDates;
-import com.nba.players.entity.MyPlayers;
-import com.nba.players.entity.Schedule;
-import com.nba.players.model.GameDateRosterModel;
-import com.nba.players.model.MyPlayersModel;
-import com.nba.players.model.PermModel;
 
 @Service
 public class PermService implements IPermService {
