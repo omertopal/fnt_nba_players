@@ -131,10 +131,10 @@ public class MyPlayers implements Serializable {
 	}
 
 	public Date getInjEnd() {
-		return injEnd;
+		return new Date(injEnd.getTime());
 	}
 
 	public void setInjEnd(Date injEnd) {
-		this.injEnd = injEnd;
+		this.injEnd = (Date) injEnd.clone();
 	}
 }

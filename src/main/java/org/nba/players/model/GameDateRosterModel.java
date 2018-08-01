@@ -25,11 +25,11 @@ public class GameDateRosterModel {
     private Double totalPts;    
 
 	public Date getGameDate() {
-		return gameDate;
+		return new Date(gameDate.getTime());
 	}
 
 	public void setGameDate(Date gameDate) {
-		this.gameDate = gameDate;
+		this.gameDate = (Date) gameDate.clone();
 	}
 
 	public int getActivePlayersCount() {

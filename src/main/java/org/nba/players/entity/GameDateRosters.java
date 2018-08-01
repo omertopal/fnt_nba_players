@@ -65,11 +65,11 @@ public class GameDateRosters implements Serializable {
 	}
 
 	public Date getGameDate() {
-		return gameDate;
+		return new Date(gameDate.getTime());
 	}
 
 	public void setGameDate(Date gameDate) {
-		this.gameDate = gameDate;
+		this.gameDate = (Date) gameDate.clone();
 	}
 
 	public int getActivePlayersCount() {
@@ -89,11 +89,11 @@ public class GameDateRosters implements Serializable {
 	}
 
 	public Timestamp getRunTime() {
-		return runTime;
+		return new Timestamp(runTime.getTime());
 	}
 
 	public void setRunTime(Timestamp runTime) {
-		this.runTime = runTime;
+		this.runTime = (Timestamp) runTime.clone();
 	}
 
 	public Double getTotalPts() {
