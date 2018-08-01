@@ -15,16 +15,16 @@ public class SchedulePK implements Serializable {
     public SchedulePK() {}
 
     public SchedulePK(Date gameDate, String team) {
-        this.gameDate = gameDate;
+        this.gameDate = (Date) gameDate.clone();
         this.team = team;
     }
 
 	public Date getGameDate() {
-		return gameDate;
+		return new Date ( gameDate.getTime());
 	}
 
 	public void setGameDate(Date gameDate) {
-		this.gameDate = gameDate;
+		this.gameDate = (Date)gameDate.clone();
 	}
 
 	public String getTeam() {

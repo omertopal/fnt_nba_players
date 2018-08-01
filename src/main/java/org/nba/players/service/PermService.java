@@ -82,7 +82,6 @@ public class PermService implements IPermService {
 		
 		List<MyPlayersModel> myPlayersToday = new ArrayList<>();
 		
-		List<PermModel> permutations  = new ArrayList<>();
 		
 		for (GameDates currGameDate : gameDates) {			
 			myPlayersToday.clear();
@@ -126,7 +125,6 @@ public class PermService implements IPermService {
 			if(myPlayersToday.size()>0 && myPlayersToday.size()<13){
 				gamedateRoster.add(fillGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday));
 			}
-			permutations.clear();
 			myPlayersToday.clear();
 			
 			System.out.println("currGameDate:" + currGameDate.toString());

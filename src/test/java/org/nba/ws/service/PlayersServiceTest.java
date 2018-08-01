@@ -31,11 +31,13 @@ public class PlayersServiceTest extends AbstractTest{
 	@Before
 	public void setup(){
 		mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		System.out.println(mvc.toString());
 	}
 	
 	@Before
 	public void setup(BaseController controller){
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
+		System.out.println(mvc.toString());	
 	}
 	
 	@After

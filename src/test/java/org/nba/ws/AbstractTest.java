@@ -17,5 +17,6 @@ public abstract class AbstractTest {
 	
 	@Before
 	public void setup(NbaController controller){
+		logger.debug("started");
 	}
 }

@@ -34,11 +34,11 @@ public class Schedule implements Serializable {
 	}
 
 	public Date getGameDate() {
-		return gameDate;
+		return new Date(gameDate.getTime());
 	}
 
 	public void setGameDate(Date gameDate) {
-		this.gameDate = gameDate;
+		this.gameDate = (Date) gameDate.clone();
 	}
 
 	public String getTeam() {
