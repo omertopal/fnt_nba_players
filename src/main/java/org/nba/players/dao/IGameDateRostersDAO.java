@@ -11,4 +11,5 @@ public interface IGameDateRostersDAO {
 	public void updateAll(GameDateRosterModel roster);
 	public void remove(GameDateRosterModel roster);
 	void removeAll();
+	public int getNextCalcId();
 }

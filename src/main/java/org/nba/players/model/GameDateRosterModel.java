@@ -1,6 +1,7 @@
 package org.nba.players.model;
 
 import java.sql.Date;
+import java.util.List;
 
 public class GameDateRosterModel {	
 	
@@ -20,9 +21,13 @@ public class GameDateRosterModel {
     
     private int permId;
     
+    private int calcId;
+    
     private int activePlayersCount;
     
     private Double totalPts;    
+    
+    private List<GameDateRosterEqModel> equivalentPermutations;
 
 	public Date getGameDate() {
 		return new Date(gameDate.getTime());
@@ -96,6 +101,14 @@ public class GameDateRosterModel {
 		this.permId = permId;
 	}
 
+	public int getCalcId() {
+		return calcId;
+	}
+
+	public void setCalcId(int calcId) {
+		this.calcId = calcId;
+	}
+
 	public Double getTotalPts() {
 		return totalPts;
 	}
@@ -103,4 +116,14 @@ public class GameDateRosterModel {
 	public void setTotalPts(Double totalPts) {
 		this.totalPts = totalPts;
 	}
+
+	public List<GameDateRosterEqModel> getEquivalentPermutations() {
+		return equivalentPermutations;
+	}
+
+	public void setEquivalentPermutations(List<GameDateRosterEqModel> equivalentPermutations) {
+		this.equivalentPermutations = equivalentPermutations;
+	}
+
+	
 }

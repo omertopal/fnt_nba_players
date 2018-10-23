@@ -2,12 +2,11 @@ package org.nba.players.dao;
 
 import java.util.List;
 
-import org.nba.players.entity.MyPlayers;
 import org.nba.players.entity.Player;
 
 public interface IPlayerDAO {
 	List<Player> getAllPlayers();
-	public List<MyPlayers> getMyPlayers();	
+	public List<Player> getMyPlayers();	
 	Player getPlayerById(int id);
 	void addPlayer(Player player);
     void updatePlayer(Player player);

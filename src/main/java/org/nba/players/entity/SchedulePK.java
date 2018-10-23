@@ -10,13 +10,13 @@ public class SchedulePK implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	protected Date gameDate;
-    protected String team;
+    protected String home;
 
     public SchedulePK() {}
 
-    public SchedulePK(Date gameDate, String team) {
+    public SchedulePK(Date gameDate, String home) {
         this.gameDate = (Date) gameDate.clone();
-        this.team = team;
+        this.home = home;
     }
 
 	public Date getGameDate() {
@@ -27,12 +27,12 @@ public class SchedulePK implements Serializable {
 		this.gameDate = (Date)gameDate.clone();
 	}
 
-	public String getTeam() {
-		return team;
+	public String getHome() {
+		return home;
 	}
 
-	public void setTeam(String team) {
-		this.team = team;
+	public void setHome(String home) {
+		this.home = home;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class SchedulePK implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((gameDate == null) ? 0 : gameDate.hashCode());
-		result = prime * result + ((team == null) ? 0 : team.hashCode());
+		result = prime * result + ((home == null) ? 0 : home.hashCode());
 		return result;
 	}
 
@@ -58,10 +58,10 @@ public class SchedulePK implements Serializable {
 				return false;
 		} else if (!gameDate.equals(other.gameDate))
 			return false;
-		if (team == null) {
-			if (other.team != null)
+		if (home == null) {
+			if (other.home != null)
 				return false;
-		} else if (!team.equals(other.team))
+		} else if (!home.equals(other.home))
 			return false;
 		return true;
 	}
