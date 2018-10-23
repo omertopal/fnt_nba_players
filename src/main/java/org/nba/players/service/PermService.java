@@ -1,6 +1,9 @@
 package org.nba.players.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,11 +25,14 @@ import org.nba.players.dao.IPERM_6_9DAO;
 import org.nba.players.dao.IPlayerDAO;
 import org.nba.players.dao.IScheduleDAO;
 import org.nba.players.entity.GameDates;
-import org.nba.players.entity.MyPlayers;
+import org.nba.players.entity.Player;
+import org.nba.players.entity.Player;
 import org.nba.players.entity.Schedule;
+import org.nba.players.model.GameDateRosterEqModel;
 import org.nba.players.model.GameDateRosterModel;
-import org.nba.players.model.MyPlayersModel;
+import org.nba.players.model.PlayerModel;
 import org.nba.players.model.PermModel;
+import org.nba.players.model.PlayerModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,28 +78,56 @@ public class PermService implements IPermService {
 	
 	@Override
 	public List<GameDateRosterModel> getGameDateRosters() {
-		List<GameDateRosterModel> gamedateRoster = new ArrayList<GameDateRosterModel>();				
+		
+		List<GameDateRosterModel> gamedateRosters = new ArrayList<GameDateRosterModel>();	
+				
+		List<Player> myPlayers = playerDAO.getMyPlayers();
+		
+		List<Player> myPotentials = myPlayers.stream().filter( player -> (player.getIsPotential()==1))
+														 .collect(Collectors.toList());
+		
+		myPlayers = myPlayers.stream().filter( player -> (player.getIsMy()==1))
+				 .collect(Collectors.toList());
+		
+		if (myPotentials == null || myPotentials.isEmpty()) {
+			fillGameDateRosters(gamedateRosters,myPlayers);		
+			
+		}else {
+			for (Player potentialPlayer : myPotentials) {
+				myPlayers.add(potentialPlayer);
+				fillGameDateRosters(gamedateRosters,myPlayers);
+				myPlayers.remove(potentialPlayer);
+			}
+		}
+		
+		//gameDateRostersDAO.removeAll();
+		gameDateRostersDAO.persistAll(gamedateRosters);
+		
+		return gamedateRosters;
+		
+	}
+	
+	private void fillGameDateRosters(List<GameDateRosterModel> gamedateRosters, List<Player> myPlayers) {
+		
+		int calcId = gameDateRostersDAO.getNextCalcId();
 		
 		List<Schedule> schedule = scheduleDAO.getAllSchedule();
 		
 		List<GameDates> gameDates = gameDatesDAO.getGameDates();
 		
-		List<MyPlayers> myPlayers = playerDAO.getMyPlayers();
-		
-		List<MyPlayersModel> myPlayersToday = new ArrayList<>();
-		
+		List<PlayerModel> myPlayersToday = new ArrayList<>();
 		
 		for (GameDates currGameDate : gameDates) {			
 			myPlayersToday.clear();
 			int playerOrder = 1;
 			 
 			/*try {
-				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2018-02-07"))) continue;
+				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2018-11-21"))) continue;
 			} catch (ParseException e) {
 				e.printStackTrace();
 			} */
 			
-			for (MyPlayers currentPlayer : myPlayers) {
+			for (Player currentPlayer : myPlayers) {
 				if(isPlayerInjured(currentPlayer,currGameDate)) continue;
 					
 				List<Schedule> scheduledGamesAtCurrentDate= schedule.stream()
@@ -101,11 +135,11 @@ public class PermService implements IPermService {
 						.collect(Collectors.toList());
 				
 				List<Schedule> scheduledGamesOfPlayersTeamAtCurrentDate= scheduledGamesAtCurrentDate.stream()
-						.filter(scheduleIns -> scheduleIns.getMatch()!=null && scheduleIns.getTeam()
-						.equals(currentPlayer.getTeam())).collect(Collectors.toList());								
+						.filter(scheduleIns -> scheduleIns.getAway().equals(currentPlayer.getTeam()) || scheduleIns.getHome().equals(currentPlayer.getTeam()))
+						.collect(Collectors.toList());								
 				
 				if (!scheduledGamesOfPlayersTeamAtCurrentDate.isEmpty()){
-					MyPlayersModel myPly = new MyPlayersModel();
+					PlayerModel myPly = new PlayerModel();
 					myPly.setOrder(playerOrder);
 					myPly.setId(currentPlayer.getId());
 					myPly.setTeam(currentPlayer.getTeam());
@@ -123,21 +157,15 @@ public class PermService implements IPermService {
 			
 
 			if(myPlayersToday.size()>0 && myPlayersToday.size()<13){
-				gamedateRoster.add(fillGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday));
+				gamedateRosters.add(fillGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday,calcId));
 			}
 			myPlayersToday.clear();
 			
 			System.out.println("currGameDate:" + currGameDate.toString());
 		}
-		
-		gameDateRostersDAO.removeAll();
-		gameDateRostersDAO.persistAll(gamedateRoster);
-		
-		return gamedateRoster;
-		
 	}
 	
-	private boolean isPlayerInjured(MyPlayers currentPlayer, GameDates currGameDate) {
+	private boolean isPlayerInjured(Player currentPlayer, GameDates currGameDate) {
 		if(currentPlayer.getInjEnd()==null || currentPlayer.getInjEnd().before(currGameDate.getGameDate())) return false;
 		return true;
 	}
@@ -146,7 +174,7 @@ public class PermService implements IPermService {
 		void compare(Schedule s, Date gameDate, String team);
 	}
 		
-	public List<PermModel>  getPermutations (List<MyPlayersModel> myPlayersToday){
+	public List<PermModel>  getPermutations (List<PlayerModel> myPlayersToday){
 		if(myPlayersToday.size()==1){
 			return perm6_1DAO.getAllPerm();				
 		}else if(myPlayersToday.size()==2){
@@ -176,11 +204,16 @@ public class PermService implements IPermService {
 		}			
 	}
 	
-	public Double maxPointsToday (List<MyPlayersModel> myPlayersToday){
+	public Double maxPointsToday (List<PlayerModel> myPlayersToday){
+		
+		List<PlayerModel> sortedmyPlayersToday = myPlayersToday.stream()
+				  .sorted(Comparator.comparing(PlayerModel::getAvgPts).reversed())
+				  .collect(Collectors.toList());
+		
 		Double maxPointsToday = 0.0;
 		int count = 0;
 		int maxCount = 6;
-		for(MyPlayersModel player : myPlayersToday){
+		for(PlayerModel player : sortedmyPlayersToday){
 			if (count >= maxCount) 
 				return maxPointsToday;
 			maxPointsToday += player.getAvgPts();
@@ -189,64 +222,64 @@ public class PermService implements IPermService {
 		return maxPointsToday;
 	}
 	
-	public GameDateRosterModel fillGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<MyPlayersModel> myPlayersToday){
+	public GameDateRosterModel fillGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calcId){
 		GameDateRosterModel currGameDateRoster = new GameDateRosterModel();
-		currGameDateRoster.setGameDate(currGameDate.getGameDate());
-		currGameDateRoster.setTotalPts(new Double(0));
+		currGameDateRoster.setEquivalentPermutations(new ArrayList<>());
 		Double totalPts = new Double(0);
-		Double maxPointsToday = maxPointsToday(myPlayersToday);
+		//Double maxPointsToday = maxPointsToday(myPlayersToday);
 		for(PermModel perm : permutations){	
 			/*if(perm.getId()==307){
 				System.out.println("");
 			}*/
 			Double currTotalPts = 0.0;
-			List<MyPlayersModel> currPG = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getPg()).collect(Collectors.toList());
+			List<PlayerModel> currPG = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getPg()).collect(Collectors.toList());
 			if(currPG != null && currPG.size()>0 && currPG.get(0).getIsPG()==1) {
 				currTotalPts += currPG.get(0).getAvgPts();
 			}else{
 				currPG = null;
 			}
 			
-			List<MyPlayersModel>  currSG = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getSg()).collect(Collectors.toList());
+			List<PlayerModel>  currSG = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getSg()).collect(Collectors.toList());
 			if(currSG != null && currSG.size()>0 && currSG.get(0).getIsSG()==1){
 				currTotalPts += currSG.get(0).getAvgPts();
 			}else{
 				currSG = null;
 			}
 			
-			List<MyPlayersModel>  currSF = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getSf()).collect(Collectors.toList());
+			List<PlayerModel>  currSF = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getSf()).collect(Collectors.toList());
 			if(currSF != null && currSF.size()>0 && currSF.get(0).getIsSF()==1){
 				currTotalPts += currSF.get(0).getAvgPts();
 			}else{
 				currSF = null;
 			}
 			
-			List<MyPlayersModel>  currPF = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getPf()).collect(Collectors.toList());
+			List<PlayerModel>  currPF = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getPf()).collect(Collectors.toList());
 			if(currPF != null && currPF.size()>0 && currPF.get(0).getIsPF()==1){
 				currTotalPts += currPF.get(0).getAvgPts();
 			}else{
 				currPF = null;
 			}
 			
-			List<MyPlayersModel>  currC = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getC()).collect(Collectors.toList());
+			List<PlayerModel>  currC = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getC()).collect(Collectors.toList());
 			if(currC != null && currC.size()>0 && currC.get(0).getIsC()==1){
 				currTotalPts += currC.get(0).getAvgPts();
 			}else{
 				currC = null;
 			}
 			
-			List<MyPlayersModel>  currUT = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getUt()).collect(Collectors.toList());
+			List<PlayerModel>  currUT = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getUt()).collect(Collectors.toList());
 			if(currUT != null && currUT.size()>0 ){
 				currTotalPts += currUT.get(0).getAvgPts();
 			}else{
 				currUT = null;
 			}
 			
-			if(currTotalPts > totalPts){						
+			if(currTotalPts.compareTo(totalPts) > 0){						
 				totalPts = currTotalPts;
 				currGameDateRoster = new GameDateRosterModel();
 				currGameDateRoster.setGameDate(currGameDate.getGameDate());
 				currGameDateRoster.setTotalPts(new Double(0));
+				currGameDateRoster.setCalcId(calcId);
 				if(currPG != null && currPG.size()>0) currGameDateRoster.setPg(currPG.get(0).getId());
 				if(currSG != null && currSG.size()>0) currGameDateRoster.setSg(currSG.get(0).getId());
 				if(currSF != null && currSF.size()>0) currGameDateRoster.setSf(currSF.get(0).getId());
@@ -256,24 +289,33 @@ public class PermService implements IPermService {
 				currGameDateRoster.setPermId(perm.getId());
 				currGameDateRoster.setActivePlayersCount(myPlayersToday.size());
 				currGameDateRoster.setTotalPts(currTotalPts);	
+				List<GameDateRosterEqModel> equivalentPermList = new ArrayList<GameDateRosterEqModel>();
+				equivalentPermList.add( new GameDateRosterEqModel(perm.getId()));
+				currGameDateRoster.setEquivalentPermutations(equivalentPermList);
+			}else if (currTotalPts.compareTo(totalPts) == 0) {
+				currGameDateRoster.getEquivalentPermutations().add(new GameDateRosterEqModel(perm.getId()));
 			}
-			if(currTotalPts >= maxPointsToday) return currGameDateRoster;
+			//if(currTotalPts >= maxPointsToday) return currGameDateRoster;
 		}
 		return currGameDateRoster;
 	}
 	
-	public  List<List<MyPlayers>> generatePerm(List<MyPlayers> original) {
+	public String getEquivalentPermutations(int permId) {
+		return null;
+	}
+	
+	public  List<List<Player>> generatePerm(List<Player> original) {
 	     if (original.size() == 0) {
-	       List<List<MyPlayers>> result = new ArrayList<List<MyPlayers>>(); 
-	       result.add(new ArrayList<MyPlayers>()); 
+	       List<List<Player>> result = new ArrayList<List<Player>>(); 
+	       result.add(new ArrayList<Player>()); 
 	       return result; 
 	     }
-	     MyPlayers firstElement = original.remove(0);
-	     List<List<MyPlayers>> returnValue = new ArrayList<List<MyPlayers>>();
-	     List<List<MyPlayers>> permutations = generatePerm(original);
-	     for (List<MyPlayers> smallerPermutated : permutations) {
+	     Player firstElement = original.remove(0);
+	     List<List<Player>> returnValue = new ArrayList<List<Player>>();
+	     List<List<Player>> permutations = generatePerm(original);
+	     for (List<Player> smallerPermutated : permutations) {
 	       for (int index=0; index <= smallerPermutated.size(); index++) {
-	         List<MyPlayers> temp = new ArrayList<MyPlayers>(smallerPermutated);
+	         List<Player> temp = new ArrayList<Player>(smallerPermutated);
 	         temp.add(index, firstElement);
 	         returnValue.add(temp);
 	       }

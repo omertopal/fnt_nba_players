@@ -30,6 +30,12 @@ public class GameDates implements Serializable {
 	public void setGameDate(Date gameDate) {
 		this.gameDate = (Date) gameDate.clone();
 	}
+	
+	@Override
+	public String toString() {
+		return "GameDates [gameDate=" + gameDate.toString() + "]";
+	}
+	
 
 	@Override
 	public int hashCode() {

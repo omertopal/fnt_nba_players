@@ -20,17 +20,17 @@ public class Schedule implements Serializable {
 	private Date gameDate;
 	
 	@Id
-	private String team;
+	private String home;
 	
-	@Column(name="MATCH")
-	private String match;
+	@Column(name="AWAY")
+	private String away;
 
-	public String getMatch() {
-		return match;
+	public String getAway() {
+		return away;
 	}
 
-	public void setMatch(String match) {
-		this.match = match;
+	public void setAway(String away) {
+		this.away = away;
 	}
 
 	public Date getGameDate() {
@@ -41,12 +41,12 @@ public class Schedule implements Serializable {
 		this.gameDate = (Date) gameDate.clone();
 	}
 
-	public String getTeam() {
-		return team;
+	public String getHome() {
+		return home;
 	}
 
-	public void setTeam(String team) {
-		this.team = team;
+	public void setHome(String home) {
+		this.home = home;
 	}	
 	
 }

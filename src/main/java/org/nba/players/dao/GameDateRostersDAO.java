@@ -1,5 +1,6 @@
 package org.nba.players.dao;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,6 +11,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.nba.players.entity.GameDateRosters;
+import org.nba.players.entity.GameDateRostersEq;
+import org.nba.players.entity.Schedule;
+import org.nba.players.model.GameDateRosterEqModel;
 import org.nba.players.model.GameDateRosterModel;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +26,21 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 	private EntityManager entityManager;
 	
 	@Override
+	public int getNextCalcId() {
+		String hql = "select ROSTER_CALC_SEQ.nextval FROM dual";
+		return ((BigDecimal) entityManager.createNativeQuery(hql).getResultList().get(0)).intValue();
+	}
+	
+	@Override
 	@Transactional
 	public void persistAll(List<GameDateRosterModel> rosterModels){
 		List<GameDateRosters> rosters = mapFromModel(rosterModels);
 		
 		for (Iterator<GameDateRosters> it = rosters.iterator(); it.hasNext();) {
 			GameDateRosters roster = it.next();
-            entityManager.persist(roster);            
+            entityManager.persist(roster);   
+            entityManager.flush();
         }
-		entityManager.flush();
         entityManager.clear();
 	}
 
@@ -83,10 +93,23 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 			roster.setGameDate(curRosterModel.getGameDate());
 			roster.setTotalPts(curRosterModel.getTotalPts());
 			roster.setPermId(curRosterModel.getPermId());
+			roster.setCalcId(curRosterModel.getCalcId());
 			roster.setRunTime(new Timestamp(System.currentTimeMillis()));
+			
+			//List<GameDateRostersEq> equivalentList = new ArrayList<>();
+			for(GameDateRosterEqModel model : curRosterModel.getEquivalentPermutations()) {
+				GameDateRostersEq equivalentEntity = new GameDateRostersEq();
+				equivalentEntity.setEquivalentPermId(model.getEquivalentPermId());
+				//equivalentList.add(equivalentEntity);
+				roster.addChild(equivalentEntity);
+			}
+			//roster.setEquivalentList(equivalentList);
+			
 			resultMap.add(roster);
 		}
 		return resultMap;
 	}
+
+	
 	
 }

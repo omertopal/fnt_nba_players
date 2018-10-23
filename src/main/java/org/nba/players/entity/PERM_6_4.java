@@ -16,7 +16,7 @@ public class PERM_6_4 implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="row_id")
+	@Column(name="id")
     private int id;  
 	
 	@Column(name="pg")

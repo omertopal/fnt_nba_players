@@ -1,6 +1,6 @@
 package org.nba.players.model;
 
-public class MyPlayersModel {
+public class PlayerModel{
 	
 	private int id;  
 	

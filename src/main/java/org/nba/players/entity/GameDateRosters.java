@@ -3,12 +3,18 @@ package org.nba.players.entity;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -32,11 +38,18 @@ public class GameDateRosters implements Serializable {
 	@Column(name="PERM_ID")
     private int permId;  
 	
+	@Column(name="CALC_ID")
+    private int calcId;  
+	
 	@Column(name="RUN_TIME")
 	private Timestamp runTime; 
 	
 	@Column(name="TOTAL_PTS")
 	private Double totalPts; 
+	
+	@OneToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="gameDateRosterId")
+    //@JoinColumn(name = "gameDateRosterId", nullable = false, insertable = false, updatable = false)
+    private List<GameDateRostersEq> equivalentList = new ArrayList<>();
 	
 	@Column(name="pg")
     private int pg;  
@@ -58,6 +71,11 @@ public class GameDateRosters implements Serializable {
 
 	public int getId() {
 		return id;
+	}
+	
+	public void addChild(GameDateRostersEq equivalentEntity) {
+		equivalentList.add(equivalentEntity);
+		equivalentEntity.setGameDateRosterId(this);
 	}
 
 	public void setId(int id) {
@@ -86,6 +104,14 @@ public class GameDateRosters implements Serializable {
 
 	public void setPermId(int permId) {
 		this.permId = permId;
+	}
+
+	public int getCalcId() {
+		return calcId;
+	}
+
+	public void setCalcId(int calcId) {
+		this.calcId = calcId;
 	}
 
 	public Timestamp getRunTime() {
@@ -150,5 +176,13 @@ public class GameDateRosters implements Serializable {
 
 	public void setUt(int ut) {
 		this.ut = ut;
+	}
+
+	public List<GameDateRostersEq> getEquivalentList() {
+		return equivalentList;
+	}
+
+	public void setEquivalentList(List<GameDateRostersEq> equivalentList) {
+		this.equivalentList = equivalentList;
 	}
 }

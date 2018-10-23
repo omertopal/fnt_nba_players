@@ -2,7 +2,6 @@ package org.nba.players.controller;
 
 import java.util.List;
 
-import org.nba.players.entity.MyPlayers;
 import org.nba.players.entity.Player;
 import org.nba.players.service.IPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +36,9 @@ public class PlayerController extends NbaController{
 	}
 	
 	@GetMapping("myPlayers")
-	public ResponseEntity<List<MyPlayers>> getMyPlayers() {
-		List<MyPlayers> list = playerService.getMyPlayers();
-		return new ResponseEntity<List<MyPlayers>>(list, HttpStatus.OK);
+	public ResponseEntity<List<Player>> getMyPlayers() {
+		List<Player> list = playerService.getMyPlayers();
+		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
 	}
 	
 	@PostMapping("player")

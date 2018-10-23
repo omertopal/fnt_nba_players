@@ -3,7 +3,6 @@ package org.nba.players.service;
 import java.util.List;
 
 import org.nba.players.dao.IPlayerDAO;
-import org.nba.players.entity.MyPlayers;
 import org.nba.players.entity.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class PlayerService implements IPlayerService {
 	}
 	
 	@Override
-	public List<MyPlayers> getMyPlayers() {
+	public List<Player> getMyPlayers() {
 		return playerDAO.getMyPlayers();
 	}
 
