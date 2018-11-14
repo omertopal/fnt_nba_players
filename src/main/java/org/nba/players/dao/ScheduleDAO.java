@@ -20,7 +20,9 @@ public class ScheduleDAO implements IScheduleDAO {
 	@Override
 	public List<Schedule> getAllSchedule() {
 		String hql = "FROM Schedule where  gameDate >= trim(sysdate-(1/3)) ORDER BY gameDate,home";
-		return (List<Schedule>) entityManager.createQuery(hql).getResultList();
+		List<Schedule> returnValue = (List<Schedule>) entityManager.createQuery(hql).getResultList();
+		entityManager.close();
+		return returnValue;
 	}
 
 }

@@ -28,7 +28,9 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 	@Override
 	public int getNextCalcId() {
 		String hql = "select ROSTER_CALC_SEQ.nextval FROM dual";
-		return ((BigDecimal) entityManager.createNativeQuery(hql).getResultList().get(0)).intValue();
+		int returnValue = ((BigDecimal) entityManager.createNativeQuery(hql).getResultList().get(0)).intValue();
+		entityManager.close();
+		return returnValue;
 	}
 	
 	@Override
@@ -40,8 +42,9 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 			GameDateRosters roster = it.next();
             entityManager.persist(roster);   
             entityManager.flush();
+            entityManager.close();
         }
-        entityManager.clear();
+        
 	}
 
 	@Override

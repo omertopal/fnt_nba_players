@@ -121,8 +121,9 @@ public class PermService implements IPermService {
 			myPlayersToday.clear();
 			int playerOrder = 1;
 			 
-			/*try {
-				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2018-11-21"))) continue;
+			/*
+			try {
+				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2018-12-20"))) continue;
 			} catch (ParseException e) {
 				e.printStackTrace();
 			} */

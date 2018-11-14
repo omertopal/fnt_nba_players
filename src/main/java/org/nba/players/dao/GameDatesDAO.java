@@ -20,7 +20,9 @@ public class GameDatesDAO implements IGameDatesDAO {
 	@Override
 	public List<GameDates> getGameDates(){
 		String hql = "FROM GameDates where gameDate >= trim(sysdate-(1/3)) ORDER BY gameDate ";
-		return (List<GameDates>) entityManager.createQuery(hql).getResultList();
+		List<GameDates> returnValue = (List<GameDates>) entityManager.createQuery(hql).getResultList();
+		entityManager.close();
+		return returnValue;
 	}
 
 }

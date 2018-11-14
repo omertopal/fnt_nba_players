@@ -1,5 +1,5 @@
 FROM java:8
-VOLUME /tmp
+VOLUME /players
 ADD target/players-0.0.1-SNAPSHOT.jar players.jar
 RUN bash -c 'touch /players.jar'
 ENV JAVA_OPTS=""
