@@ -12,7 +12,6 @@ import javax.persistence.Query;
 
 import org.nba.players.entity.GameDateRosters;
 import org.nba.players.entity.GameDateRostersEq;
-import org.nba.players.entity.Schedule;
 import org.nba.players.model.GameDateRosterEqModel;
 import org.nba.players.model.GameDateRosterModel;
 import org.springframework.stereotype.Repository;
@@ -103,6 +102,12 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 			for(GameDateRosterEqModel model : curRosterModel.getEquivalentPermutations()) {
 				GameDateRostersEq equivalentEntity = new GameDateRostersEq();
 				equivalentEntity.setEquivalentPermId(model.getEquivalentPermId());
+				equivalentEntity.setPg(model.getPg());
+				equivalentEntity.setSg(model.getSg());
+				equivalentEntity.setSf(model.getSf());
+				equivalentEntity.setPf(model.getPf());
+				equivalentEntity.setC(model.getC());
+				equivalentEntity.setUt(model.getUt());
 				//equivalentList.add(equivalentEntity);
 				roster.addChild(equivalentEntity);
 			}

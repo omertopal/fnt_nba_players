@@ -1,10 +1,9 @@
 package org.nba.players.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,18 +25,17 @@ import org.nba.players.dao.IPlayerDAO;
 import org.nba.players.dao.IScheduleDAO;
 import org.nba.players.entity.GameDates;
 import org.nba.players.entity.Player;
-import org.nba.players.entity.Player;
 import org.nba.players.entity.Schedule;
 import org.nba.players.model.GameDateRosterEqModel;
 import org.nba.players.model.GameDateRosterModel;
-import org.nba.players.model.PlayerModel;
 import org.nba.players.model.PermModel;
 import org.nba.players.model.PlayerModel;
+import org.nba.players.util.PlayerConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PermService implements IPermService {
+public class CalculationService implements IPermService {
 	
 	@Autowired
 	private IPERM_6_1DAO perm6_1DAO;
@@ -77,7 +75,7 @@ public class PermService implements IPermService {
 	private IPlayerDAO playerDAO;	
 	
 	@Override
-	public List<GameDateRosterModel> getGameDateRosters() {
+	public List<GameDateRosterModel> getGameDateRosters() throws Exception {
 		
 		List<GameDateRosterModel> gamedateRosters = new ArrayList<GameDateRosterModel>();	
 				
@@ -99,7 +97,6 @@ public class PermService implements IPermService {
 				myPlayers.remove(potentialPlayer);
 			}
 		}
-		
 		//gameDateRostersDAO.removeAll();
 		gameDateRostersDAO.persistAll(gamedateRosters);
 		
@@ -107,9 +104,9 @@ public class PermService implements IPermService {
 		
 	}
 	
-	private void fillGameDateRosters(List<GameDateRosterModel> gamedateRosters, List<Player> myPlayers) {
+	private void fillGameDateRosters(List<GameDateRosterModel> gamedateRosters, List<Player> myPlayers) throws Exception {
 		
-		int calcId = gameDateRostersDAO.getNextCalcId();
+		int nextCalculationId = getNextCalculationId(); 
 		
 		List<Schedule> schedule = scheduleDAO.getAllSchedule();
 		
@@ -158,12 +155,16 @@ public class PermService implements IPermService {
 			
 
 			if(myPlayersToday.size()>0 && myPlayersToday.size()<13){
-				gamedateRosters.add(fillGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday,calcId));
+				gamedateRosters.add(fillGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday,nextCalculationId));
 			}
 			myPlayersToday.clear();
 			
 			System.out.println("currGameDate:" + currGameDate.toString());
 		}
+	}
+	
+	protected int getNextCalculationId(){
+		return gameDateRostersDAO.getNextCalcId();
 	}
 	
 	private boolean isPlayerInjured(Player currentPlayer, GameDates currGameDate) {
@@ -223,78 +224,101 @@ public class PermService implements IPermService {
 		return maxPointsToday;
 	}
 	
-	public GameDateRosterModel fillGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calcId){
+	public PlayerModel getPlayerByPositionAndPermutationPositionNo (String positionCode, List<PlayerModel> myPlayersToday, int permutationPositionNo) throws Exception{
+		List<PlayerModel> filteredList = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==permutationPositionNo).collect(Collectors.toList());
+		if(filteredList.size()>1) {
+			throw new Exception("More than one player found for permutation:" + permutationPositionNo);
+		}else if (filteredList == null || filteredList.size() == 0) {
+			return null;
+		}
+		PlayerModel playerFound = filteredList.get(0);
+				
+		if ( (positionCode.equals(PlayerConstants.POINT_GUARD) && playerFound.getIsPG()!=1)
+			|| (positionCode.equals(PlayerConstants.SHOOTING_GUARD) &&  playerFound.getIsSG()!=1) 	
+			|| (positionCode.equals(PlayerConstants.SMALL_FORWARD)  && playerFound.getIsSF()!=1)  	
+			|| (positionCode.equals(PlayerConstants.POWER_FORWARD)  && playerFound.getIsPF()!=1)  	
+			|| (positionCode.equals(PlayerConstants.CENTER)  && playerFound.getIsC()!=1) ) {
+			return null;
+		}else return playerFound;
+	}
+	
+	public Double calculateTotalPointsOfGivenRoster (HashMap<String,PlayerModel> bestRosterMap) {
+		Double currTotalPts = 0.0;
+		currTotalPts += ( bestRosterMap.get(PlayerConstants.POINT_GUARD) == null ) ? 0 : bestRosterMap.get(PlayerConstants.POINT_GUARD).getAvgPts();
+		currTotalPts += ( bestRosterMap.get(PlayerConstants.SHOOTING_GUARD) == null ) ? 0 : bestRosterMap.get(PlayerConstants.SHOOTING_GUARD).getAvgPts();
+		currTotalPts += ( bestRosterMap.get(PlayerConstants.SMALL_FORWARD) == null ) ? 0 : bestRosterMap.get(PlayerConstants.SMALL_FORWARD).getAvgPts();
+		currTotalPts += ( bestRosterMap.get(PlayerConstants.POWER_FORWARD) == null ) ? 0 : bestRosterMap.get(PlayerConstants.POWER_FORWARD).getAvgPts();
+		currTotalPts += ( bestRosterMap.get(PlayerConstants.CENTER) == null ) ? 0 : bestRosterMap.get(PlayerConstants.CENTER).getAvgPts();
+		currTotalPts += ( bestRosterMap.get(PlayerConstants.UTIL_PLAYER) == null ) ? 0 : bestRosterMap.get(PlayerConstants.UTIL_PLAYER).getAvgPts();
+		return currTotalPts;
+	}
+	
+	public HashMap<String,PlayerModel> getRosterOfGivenPermutation (List<PlayerModel> myPlayersToday,PermModel currentPermutation) throws Exception {
+		
+		HashMap<String,PlayerModel> playersMap = new HashMap<String,PlayerModel>();
+		
+		playersMap.put(PlayerConstants.POINT_GUARD, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.POINT_GUARD,myPlayersToday,currentPermutation.getPg()));
+		playersMap.put(PlayerConstants.SHOOTING_GUARD, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.SHOOTING_GUARD,myPlayersToday,currentPermutation.getSg()));
+		playersMap.put(PlayerConstants.SMALL_FORWARD, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.SMALL_FORWARD,myPlayersToday,currentPermutation.getSf()));
+		playersMap.put(PlayerConstants.POWER_FORWARD, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.POWER_FORWARD,myPlayersToday,currentPermutation.getPf()));
+		playersMap.put(PlayerConstants.CENTER, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.CENTER,myPlayersToday,currentPermutation.getC()));
+		playersMap.put(PlayerConstants.UTIL_PLAYER, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.UTIL_PLAYER,myPlayersToday,currentPermutation.getUt()));
+		
+		return playersMap;
+	}
+	
+	public GameDateRosterModel fillGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calcId) throws Exception{
 		GameDateRosterModel currGameDateRoster = new GameDateRosterModel();
 		currGameDateRoster.setEquivalentPermutations(new ArrayList<>());
-		Double totalPts = new Double(0);
+		Double highestTotalPointsOfDay = new Double(0);
 		//Double maxPointsToday = maxPointsToday(myPlayersToday);
-		for(PermModel perm : permutations){	
+		for(PermModel currentPermutation : permutations){	
 			/*if(perm.getId()==307){
 				System.out.println("");
 			}*/
-			Double currTotalPts = 0.0;
-			List<PlayerModel> currPG = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getPg()).collect(Collectors.toList());
-			if(currPG != null && currPG.size()>0 && currPG.get(0).getIsPG()==1) {
-				currTotalPts += currPG.get(0).getAvgPts();
-			}else{
-				currPG = null;
-			}
 			
-			List<PlayerModel>  currSG = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getSg()).collect(Collectors.toList());
-			if(currSG != null && currSG.size()>0 && currSG.get(0).getIsSG()==1){
-				currTotalPts += currSG.get(0).getAvgPts();
-			}else{
-				currSG = null;
-			}
+			HashMap<String,PlayerModel> rosterOfCurrentPermutation = getRosterOfGivenPermutation(myPlayersToday, currentPermutation);
+			Double totalPointsOfCurrentRoster = calculateTotalPointsOfGivenRoster(rosterOfCurrentPermutation);
 			
-			List<PlayerModel>  currSF = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getSf()).collect(Collectors.toList());
-			if(currSF != null && currSF.size()>0 && currSF.get(0).getIsSF()==1){
-				currTotalPts += currSF.get(0).getAvgPts();
-			}else{
-				currSF = null;
-			}
-			
-			List<PlayerModel>  currPF = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getPf()).collect(Collectors.toList());
-			if(currPF != null && currPF.size()>0 && currPF.get(0).getIsPF()==1){
-				currTotalPts += currPF.get(0).getAvgPts();
-			}else{
-				currPF = null;
-			}
-			
-			List<PlayerModel>  currC = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getC()).collect(Collectors.toList());
-			if(currC != null && currC.size()>0 && currC.get(0).getIsC()==1){
-				currTotalPts += currC.get(0).getAvgPts();
-			}else{
-				currC = null;
-			}
-			
-			List<PlayerModel>  currUT = myPlayersToday.stream().filter(myPlayerIns -> myPlayerIns.getOrder()==perm.getUt()).collect(Collectors.toList());
-			if(currUT != null && currUT.size()>0 ){
-				currTotalPts += currUT.get(0).getAvgPts();
-			}else{
-				currUT = null;
-			}
-			
-			if(currTotalPts.compareTo(totalPts) > 0){						
-				totalPts = currTotalPts;
+			if(totalPointsOfCurrentRoster.compareTo(highestTotalPointsOfDay) > 0){						
+				highestTotalPointsOfDay = totalPointsOfCurrentRoster;
 				currGameDateRoster = new GameDateRosterModel();
 				currGameDateRoster.setGameDate(currGameDate.getGameDate());
 				currGameDateRoster.setTotalPts(new Double(0));
 				currGameDateRoster.setCalcId(calcId);
-				if(currPG != null && currPG.size()>0) currGameDateRoster.setPg(currPG.get(0).getId());
-				if(currSG != null && currSG.size()>0) currGameDateRoster.setSg(currSG.get(0).getId());
-				if(currSF != null && currSF.size()>0) currGameDateRoster.setSf(currSF.get(0).getId());
-				if(currPF != null && currPF.size()>0) currGameDateRoster.setPf(currPF.get(0).getId());
-				if(currC != null && currC.size()>0) currGameDateRoster.setC(currC.get(0).getId());
-				if(currUT != null && currUT.size()>0) currGameDateRoster.setUt(currUT.get(0).getId());
-				currGameDateRoster.setPermId(perm.getId());
+				
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD) != null) currGameDateRoster.setPg(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD) != null) currGameDateRoster.setSg(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD) != null) currGameDateRoster.setSf(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD) != null) currGameDateRoster.setPf(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.CENTER) != null) currGameDateRoster.setC(rosterOfCurrentPermutation.get(PlayerConstants.CENTER).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER) != null) currGameDateRoster.setUt(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER).getId());
+				
+				currGameDateRoster.setPermId(currentPermutation.getId());
 				currGameDateRoster.setActivePlayersCount(myPlayersToday.size());
-				currGameDateRoster.setTotalPts(currTotalPts);	
+				currGameDateRoster.setTotalPts(totalPointsOfCurrentRoster);	
 				List<GameDateRosterEqModel> equivalentPermList = new ArrayList<GameDateRosterEqModel>();
-				equivalentPermList.add( new GameDateRosterEqModel(perm.getId()));
+				GameDateRosterEqModel eqModel = new GameDateRosterEqModel(currentPermutation.getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD) != null) eqModel.setPg(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD) != null) eqModel.setSg(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD) != null) eqModel.setSf(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD) != null) eqModel.setPf(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.CENTER) != null) eqModel.setC(rosterOfCurrentPermutation.get(PlayerConstants.CENTER).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER) != null) eqModel.setUt(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER).getId());
+				equivalentPermList.add( eqModel);
 				currGameDateRoster.setEquivalentPermutations(equivalentPermList);
-			}else if (currTotalPts.compareTo(totalPts) == 0) {
-				currGameDateRoster.getEquivalentPermutations().add(new GameDateRosterEqModel(perm.getId()));
+			}else if (totalPointsOfCurrentRoster.compareTo(highestTotalPointsOfDay) == 0) {
+				
+				GameDateRosterEqModel eqModel = new GameDateRosterEqModel(currentPermutation.getId());
+				
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD) != null) eqModel.setPg(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD) != null) eqModel.setSg(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD) != null) eqModel.setSf(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD) != null) eqModel.setPf(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.CENTER) != null) eqModel.setC(rosterOfCurrentPermutation.get(PlayerConstants.CENTER).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER) != null) eqModel.setUt(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER).getId());
+				
+				currGameDateRoster.getEquivalentPermutations().add(eqModel);
 			}
 			//if(currTotalPts >= maxPointsToday) return currGameDateRoster;
 		}
