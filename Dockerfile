@@ -1,6 +1,6 @@
 FROM java:8
 EXPOSE 8084
-COPY target/*.jar /app/application.jar
+COPY target/players-0.0.1-SNAPSHOT.jar /app/application.jar
 EXPOSE 8080
 ENTRYPOINT java -jar /app/application.jar
 

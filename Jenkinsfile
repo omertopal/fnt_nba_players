@@ -1,9 +1,19 @@
 node {
     def app
 
+    tools {
+        maven 'Maven 3.3.9'
+        jdk 'jdk8'
+    }
+    
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
+    }
+    stage(''){
+    	steps {
+        	sh 'mvn clean package' 
+        }
     }
     stage('Build image') {
         /* This builds the actual image; synonymous to
