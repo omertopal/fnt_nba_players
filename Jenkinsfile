@@ -8,7 +8,7 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-        app = docker.build("-u jenkins omertopal/fnt_nba_players")
+        app = docker.build("omertopal/fnt_nba_players")
     }
     stage('Test image') {
         /* Ideally, we would run a test framework against our image.
