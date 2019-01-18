@@ -1,22 +1,16 @@
 node {
-    def app
-
+    def app    
+	
 	stages {
 	    stage('Compile stage') {
 	        steps {
-	            maven(maven : 'Maven_3.5.2'){
-	                bat "mvn clean compile"
+	        	bat "mvn clean compile"
 	        }
 	    }
 	    
 	    stage('Clone repository') {
 	        /* Let's make sure we have the repository cloned to our workspace */
 	        checkout scm
-	    }
-	    stage(''){
-	    	steps {
-	        	sh 'mvn clean package' 
-	        }
 	    }
 	    stage('Build image') {
 	        /* This builds the actual image; synonymous to
@@ -34,6 +28,7 @@ node {
 	    stage('Run Image'){
 	    	sh "docker run -it -d -v /tmp:/tmp -p 8085:8084 --name application application"
 	    }    
+	    /*
 	    stage('Push image') {
 	        /* Finally, we'll push the image with two tags:
 	         * First, the incremental build number from Jenkins
@@ -44,6 +39,7 @@ node {
 	            app.push("latest")
 	        }
 	    }
+		*/	    
 	    stage('Deploy Image'){
 	    }
 	}
