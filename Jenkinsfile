@@ -1,7 +1,11 @@
 node  {
-    def app    
+    def app  
+    
+	def mvnTool = tool 'maven_3.3.9'
+
     stage('Compile stage') {        
-        bat "mvn clean compile"
+       // execute maven
+		sh "${mvnTool}/bin/mvn clean install" 
     }
     
     stage('Clone repository') {
