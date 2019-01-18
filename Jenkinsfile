@@ -1,9 +1,7 @@
 node  {
     def app    
-    stage('Compile stage') {
-        steps {
-        	bat "mvn clean compile"
-        }
+    stage('Compile stage') {        
+        bat "mvn clean compile"
     }
     
     stage('Clone repository') {
