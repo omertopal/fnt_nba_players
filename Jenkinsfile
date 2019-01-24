@@ -3,15 +3,17 @@ node  {
     
 	def mvnTool = tool 'maven_3.3.9'
 
+    stage('Clone repository') {
+        /* Let's make sure we have the repository cloned to our workspace */
+        checkout scm
+    }
+    
     stage('Compile stage') {        
        // execute maven
 		sh "${mvnTool}/bin/mvn clean install" 
     }
     
-    stage('Clone repository') {
-        /* Let's make sure we have the repository cloned to our workspace */
-        checkout scm
-    }
+    
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
