@@ -1,0 +1,21 @@
+package org.nba.players.opta
+
+import org.nba.players.opta.PlayerSlotSelection;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+
+global HardSoftScoreHolder scoreHolder;
+
+rule "dummyRule"
+    when
+        PlayerSlotSelection( gameDate in (1,2) || positionSlot ==1 ) 
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Required Skill"
+	when
+		PlayerSlotSelection( getPlayer() != null,
+							! getPlayer().hasSkillForSpot(getPositionSlot()) )
+	then
+		scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
