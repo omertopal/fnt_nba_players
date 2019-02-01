@@ -223,13 +223,13 @@ public class CalculationService implements IPermService {
 			myPlayersToday.clear();
 			int playerOrder = 1;
 			
-			
+			/*
 			try {
 				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-02"))) continue;
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			
+			*/
 			
 			for (Player currentPlayer : myPlayers) {
 				if(isPlayerInjured(currentPlayer,currGameDate)) continue;
