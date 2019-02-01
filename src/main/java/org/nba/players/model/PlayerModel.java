@@ -23,6 +23,26 @@ public class PlayerModel{
 	private int isPF;
 		
 	private int isC;
+	
+	public boolean hasPGSkill() {
+		return isPG==1;
+	}
+	
+	public boolean hasSGSkill() {
+		return isSG==1;
+	}
+	
+	public boolean hasSFSkill() {
+		return isSF==1;
+	}
+	
+	public boolean hasPFSkill() {
+		return isPF==1;
+	}
+	
+	public boolean hasCSkill() {
+		return isC==1;
+	}
 
 	public int getId() {
 		return id;

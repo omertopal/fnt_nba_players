@@ -1,12 +1,17 @@
 package org.nba.players.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.nba.players.common.CommonUtils;
 import org.nba.players.dao.IGameDateRostersDAO;
 import org.nba.players.dao.IGameDatesDAO;
 import org.nba.players.dao.IPERM_6_10DAO;
@@ -30,7 +35,12 @@ import org.nba.players.model.GameDateRosterEqModel;
 import org.nba.players.model.GameDateRosterModel;
 import org.nba.players.model.PermModel;
 import org.nba.players.model.PlayerModel;
+import org.nba.players.opta.NbaOptaSchedule;
+import org.nba.players.opta.OptaPlayer;
+import org.nba.players.opta.PlayerSlotSelection;
 import org.nba.players.util.PlayerConstants;
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.api.solver.SolverFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,21 +85,22 @@ public class CalculationService implements IPermService {
 	private IPlayerDAO playerDAO;	
 	
 	@Override
-	public List<GameDateRosterModel> getGameDateRosters() throws Exception {
+	public List<GameDateRosterModel> getGameDateRosters(String method) throws Exception {
 		
 		List<GameDateRosterModel> gamedateRosters = new ArrayList<GameDateRosterModel>();	
 				
 		List<Player> myPlayers = playerDAO.getMyPlayers();
 		
-		List<Player> myPotentials = myPlayers.stream().filter( player -> (player.getIsPotential()==1))
-														 .collect(Collectors.toList());
+		//List<Player> myPotentials = myPlayers.stream().filter( player -> (player.getIsPotential()==1)).collect(Collectors.toList());
 		
 		myPlayers = myPlayers.stream().filter( player -> (player.getIsMy()==1))
 				 .collect(Collectors.toList());
 		
-		if (myPotentials == null || myPotentials.isEmpty()) {
-			fillGameDateRosters(gamedateRosters,myPlayers);		
+		//if (myPotentials == null || myPotentials.isEmpty()) {
 			
+		fillGameDateRosters(gamedateRosters,myPlayers,method);		
+		
+		/*
 		}else {
 			for (Player potentialPlayer : myPotentials) {
 				myPlayers.add(potentialPlayer);
@@ -97,6 +108,7 @@ public class CalculationService implements IPermService {
 				myPlayers.remove(potentialPlayer);
 			}
 		}
+		*/
 		//gameDateRostersDAO.removeAll();
 		gameDateRostersDAO.persistAll(gamedateRosters);
 		
@@ -104,9 +116,100 @@ public class CalculationService implements IPermService {
 		
 	}
 	
-	private void fillGameDateRosters(List<GameDateRosterModel> gamedateRosters, List<Player> myPlayers) throws Exception {
+	private HashMap<java.sql.Date,Integer> getGameDatesHashMap () {
+		HashMap<java.sql.Date,Integer> resultMap = new HashMap<>();
+		List<GameDates> gameDatesList = gameDatesDAO.getGameDates();
 		
-		int nextCalculationId = getNextCalculationId(); 
+		int gameDateId = 1;
+		for (GameDates gameDate : gameDatesList) {			
+			resultMap.put(gameDate.getGameDate(),gameDateId);
+			gameDateId ++;
+			break;
+		}
+		return resultMap;
+	}
+	
+	private void addDefaultSkillsToPlayer(Set<Integer> playerSkills) {
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.UTIL_PLAYER));
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.BENCH_PLAYER_1));
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.BENCH_PLAYER_2));
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.BENCH_PLAYER_3));
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.BENCH_PLAYER_4));
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.BENCH_PLAYER_5));
+		playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.BENCH_PLAYER_6));
+	}
+	
+	private List<OptaPlayer> getOptaPlayersList (List<PlayerModel> myPlayers) {
+		
+		List<OptaPlayer> optaPlayersList = new ArrayList<>();
+		
+		for (PlayerModel player : myPlayers) {
+			
+			OptaPlayer optaPlayer = new OptaPlayer();
+			optaPlayer.setAvgPts(player.getAvgPts());
+			optaPlayer.setPlayerId(player.getId());
+			optaPlayer.setName(player.getName());
+			
+			Set<Integer> playerSkills = new HashSet<Integer>();
+			addDefaultSkillsToPlayer(playerSkills);
+			if(player.hasPGSkill())  playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.POINT_GUARD));
+			if(player.hasSGSkill())  playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.SHOOTING_GUARD));
+			if(player.hasSFSkill())  playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.SMALL_FORWARD));
+			if(player.hasPFSkill())  playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.POWER_FORWARD));
+			if(player.hasCSkill())  playerSkills.add(CommonUtils.getPlayerSkills().get(PlayerConstants.CENTER));
+			
+			optaPlayer.setSkills(playerSkills);
+			
+			/*
+			List<Schedule> scheduledGamesOfPlayersTeam= allNbaSchedule.stream()
+					.filter(scheduleIns -> scheduleIns.getAway().equals(player.getTeam()) 
+										|| scheduleIns.getHome().equals(player.getTeam()))
+					.collect(Collectors.toList());								
+			
+			List<Integer> playerGameDates = new ArrayList<>();
+			if (!scheduledGamesOfPlayersTeam.isEmpty()){
+				for (Schedule schedule : scheduledGamesOfPlayersTeam) {
+					if(gameDatesHashMap.get(schedule.getGameDate()) != null) {
+						playerGameDates.add(gameDatesHashMap.get(schedule.getGameDate()));
+					}
+				}
+			}
+			
+			
+			
+			OptaTeam playerTeam = new OptaTeam();
+			playerTeam.setGameDates(playerGameDates);
+			optaPlayer.setTeam(playerTeam);
+			*/
+			
+			optaPlayersList.add(optaPlayer);
+		}
+		return optaPlayersList;
+	}
+	
+	private void optaFillTodaysGameDateRoster(List<GameDateRosterModel> gamedateRosters, GameDates gameDate, List<PlayerModel> myPlayersToday,int nextCalculationId) throws Exception {
+		
+		NbaOptaSchedule unsolvedNbaOptaSchedule = new NbaOptaSchedule();
+		
+		for(int i = 0; i < 100; i++){
+            unsolvedNbaOptaSchedule.getSelectionList().add(new PlayerSlotSelection());
+        }
+		
+        unsolvedNbaOptaSchedule.getPositionSlotList().addAll(CommonUtils.getPositionSlots(myPlayersToday.size()).keySet());
+        unsolvedNbaOptaSchedule.getPlayerList().addAll(getOptaPlayersList(myPlayersToday));
+		
+		SolverFactory<NbaOptaSchedule> solverFactory = SolverFactory.createFromXmlResource("nbaScheduleSolverConfiguration.xml");
+        Solver<NbaOptaSchedule> solver = solverFactory.buildSolver();
+        NbaOptaSchedule solvedNbaSchedule = solver.solve(unsolvedNbaOptaSchedule);
+        
+        solvedNbaSchedule.getSelectionList().removeIf(selection -> (selection.getPositionSlot()==null));
+        solvedNbaSchedule.printNbaSchedule();
+        
+			
+			
+	}
+	
+	private void fillGameDateRosters(List<GameDateRosterModel> gamedateRosters, List<Player> myPlayers,String method) throws Exception {
 		
 		List<Schedule> schedule = scheduleDAO.getAllSchedule();
 		
@@ -114,16 +217,19 @@ public class CalculationService implements IPermService {
 		
 		List<PlayerModel> myPlayersToday = new ArrayList<>();
 		
+		int nextCalculationId = getNextCalculationId();
+		
 		for (GameDates currGameDate : gameDates) {			
 			myPlayersToday.clear();
 			int playerOrder = 1;
-			 
-			/*
+			
+			
 			try {
-				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2018-12-20"))) continue;
+				if (!currGameDate.getGameDate().equals(new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-02"))) continue;
 			} catch (ParseException e) {
 				e.printStackTrace();
-			} */
+			}
+			
 			
 			for (Player currentPlayer : myPlayers) {
 				if(isPlayerInjured(currentPlayer,currGameDate)) continue;
@@ -155,7 +261,13 @@ public class CalculationService implements IPermService {
 			
 
 			if(myPlayersToday.size()>0 && myPlayersToday.size()<13){
-				gamedateRosters.add(fillGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday,nextCalculationId));
+				
+				if (CommonUtils.STANDART_METHOD.equals(method)) {
+					gamedateRosters.add(fillTodaysGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday,nextCalculationId));
+				}else if(CommonUtils.OPTA_METHOD.equals(method)) {
+					optaFillTodaysGameDateRoster(gamedateRosters,currGameDate, myPlayersToday,1000000+nextCalculationId);
+				}
+				
 			}
 			myPlayersToday.clear();
 			
@@ -267,7 +379,7 @@ public class CalculationService implements IPermService {
 		return playersMap;
 	}
 	
-	public GameDateRosterModel fillGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calcId) throws Exception{
+	public GameDateRosterModel fillTodaysGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calcId) throws Exception{
 		GameDateRosterModel currGameDateRoster = new GameDateRosterModel();
 		currGameDateRoster.setEquivalentPermutations(new ArrayList<>());
 		Double highestTotalPointsOfDay = new Double(0);

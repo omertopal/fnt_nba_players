@@ -5,12 +5,14 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
 global HardSoftScoreHolder scoreHolder;
 
+/*
 rule "dummyRule"
     when
         PlayerSlotSelection( gameDate in (1,2) || positionSlot ==1 ) 
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
+
 
 rule "Required Skill"
 	when
@@ -19,3 +21,4 @@ rule "Required Skill"
 	then
 		scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
+*/

@@ -2,7 +2,7 @@ package org.nba.players.opta;
 
 import java.util.Set;
 
-public class Player{
+public class OptaPlayer{
 	
 	private Integer playerId;
 	
@@ -10,13 +10,20 @@ public class Player{
 	
 	private Double avgPts;
 	
+	private OptaTeam team;
+	
 	private Set<Integer> skills;
 	
 	public boolean hasSkillForSpot(Integer spot) {
 		if(skills.contains(spot)) return true;
 		return false;
 	}
-
+	
+	public boolean playerHasGameThatDay(Integer currGameDate) {
+		if(team.getGameDates().contains(currGameDate)) return true;
+		return false;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -47,6 +54,10 @@ public class Player{
 
 	public void setPlayerId(Integer playerId) {
 		this.playerId = playerId;
+	}
+
+	public void setTeam(OptaTeam team) {
+		this.team = team;
 	}
 	
 	

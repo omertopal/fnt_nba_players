@@ -7,13 +7,15 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 public class PlayerSlotSelection {
 
     private Integer positionSlot;
-    private Integer gameDate;
-    private Player player;
+    //private Integer gameDate;
+    private OptaPlayer player;
 
+    /*
     @PlanningVariable(valueRangeProviderRefs = {"availableGameDates"})
     public Integer getGameDate() {
         return gameDate;
     }
+    */
 
     @PlanningVariable(valueRangeProviderRefs = {"availableSlots"})
     public Integer getPositionSlot() {
@@ -21,19 +23,21 @@ public class PlayerSlotSelection {
     }
     
     @PlanningVariable(valueRangeProviderRefs = {"availablePlayers"})
-    public Player getPlayer() {
+    public OptaPlayer getPlayer() {
         return player;
     }
 
+    /*
     public void setGameDate(Integer gameDate) {
         this.gameDate = gameDate;
     }
+    */
 
     public void setPositionSlot(Integer positionSlot) {
         this.positionSlot = positionSlot;
     }
 
-	public void setPlayer(Player player) {
+	public void setPlayer(OptaPlayer player) {
 		this.player = player;
 	}
 

@@ -3,7 +3,7 @@
     <scanAnnotatedClasses/>
 
     <scoreDirectorFactory>
-        <easyScoreCalculatorClass>com.baeldung.optaplanner.ScoreCalculator</easyScoreCalculatorClass>
+        <easyScoreCalculatorClass>org.nba.players.opta.ScoreCalculator</easyScoreCalculatorClass>
     </scoreDirectorFactory>
 
     <termination>

@@ -47,7 +47,7 @@ public class GameDateRosters implements Serializable {
 	@Column(name="TOTAL_PTS")
 	private Double totalPts; 
 	
-	@OneToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="gameDateRosterId")
+	@OneToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="gameDateRosterId", orphanRemoval = true)
     //@JoinColumn(name = "gameDateRosterId", nullable = false, insertable = false, updatable = false)
     private List<GameDateRostersEq> equivalentList = new ArrayList<>();
 	
