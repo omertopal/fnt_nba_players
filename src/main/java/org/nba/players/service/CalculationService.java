@@ -187,28 +187,6 @@ public class CalculationService implements IPermService {
 		return optaPlayersList;
 	}
 	
-	private void optaFillTodaysGameDateRoster(List<GameDateRosterModel> gamedateRosters, GameDates gameDate, List<PlayerModel> myPlayersToday,int nextCalculationId) throws Exception {
-		
-		NbaOptaSchedule unsolvedNbaOptaSchedule = new NbaOptaSchedule();
-		
-		for(int i = 0; i < 100; i++){
-            unsolvedNbaOptaSchedule.getSelectionList().add(new PlayerSlotSelection());
-        }
-		
-        unsolvedNbaOptaSchedule.getPositionSlotList().addAll(CommonUtils.getPositionSlots(myPlayersToday.size()).keySet());
-        unsolvedNbaOptaSchedule.getPlayerList().addAll(getOptaPlayersList(myPlayersToday));
-		
-		SolverFactory<NbaOptaSchedule> solverFactory = SolverFactory.createFromXmlResource("nbaScheduleSolverConfiguration.xml");
-        Solver<NbaOptaSchedule> solver = solverFactory.buildSolver();
-        NbaOptaSchedule solvedNbaSchedule = solver.solve(unsolvedNbaOptaSchedule);
-        
-        solvedNbaSchedule.getSelectionList().removeIf(selection -> (selection.getPositionSlot()==null));
-        solvedNbaSchedule.printNbaSchedule();
-        
-			
-			
-	}
-	
 	private void fillGameDateRosters(List<GameDateRosterModel> gamedateRosters, List<Player> myPlayers,String method) throws Exception {
 		
 		List<Schedule> schedule = scheduleDAO.getAllSchedule();
@@ -377,6 +355,48 @@ public class CalculationService implements IPermService {
 		playersMap.put(PlayerConstants.UTIL_PLAYER, getPlayerByPositionAndPermutationPositionNo (PlayerConstants.UTIL_PLAYER,myPlayersToday,currentPermutation.getUt()));
 		
 		return playersMap;
+	}
+	
+	private void optaFillTodaysGameDateRoster(List<GameDateRosterModel> gamedateRosters, GameDates gameDate, List<PlayerModel> myPlayersToday,int nextCalculationId) throws Exception {
+		
+		NbaOptaSchedule unsolvedNbaOptaSchedule = new NbaOptaSchedule();
+		
+		for(int i = 0; i < myPlayersToday.size(); i++){
+            unsolvedNbaOptaSchedule.getSelectionList().add(new PlayerSlotSelection());
+        }
+		
+        unsolvedNbaOptaSchedule.getPositionSlotList().addAll(CommonUtils.getPositionSlots(myPlayersToday.size()).keySet());
+        unsolvedNbaOptaSchedule.getPlayerList().addAll(getOptaPlayersList(myPlayersToday));
+		
+		SolverFactory<NbaOptaSchedule> solverFactory = SolverFactory.createFromXmlResource("nbaScheduleSolverConfiguration.xml");
+        Solver<NbaOptaSchedule> solver = solverFactory.buildSolver();
+        NbaOptaSchedule solvedNbaSchedule = solver.solve(unsolvedNbaOptaSchedule);
+        
+        //solvedNbaSchedule.getSelectionList().removeIf(selection -> (selection.getPositionSlot()==null));
+        List<PlayerSlotSelection> filteredList = solvedNbaSchedule.getSelectionList().stream().limit(myPlayersToday.size()).collect(Collectors.toList());
+        //solvedNbaSchedule.printNbaSchedule();
+        
+        GameDateRosterModel todayRoster = new GameDateRosterModel();
+        todayRoster.setEquivalentPermutations(new ArrayList<>());
+        todayRoster.setGameDate(gameDate.getGameDate());
+        todayRoster.setTotalPts(new Double(0));
+        todayRoster.setCalcId(nextCalculationId);
+        Double totalPointsOfCurrentRoster = 0.0;
+        
+        for (PlayerSlotSelection playerSlotSelection : filteredList) {
+        	totalPointsOfCurrentRoster += playerSlotSelection.getPlayer().getAvgPts();
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.POINT_GUARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setPg(playerSlotSelection.getPlayer().getPlayerId());
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.SHOOTING_GUARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setSg(playerSlotSelection.getPlayer().getPlayerId());
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.SMALL_FORWARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setSf(playerSlotSelection.getPlayer().getPlayerId());
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.POWER_FORWARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setPf(playerSlotSelection.getPlayer().getPlayerId());
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.CENTER).equals(playerSlotSelection.getPositionSlot())) todayRoster.setC(playerSlotSelection.getPlayer().getPlayerId());
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.UTIL_PLAYER).equals(playerSlotSelection.getPositionSlot())) todayRoster.setUt(playerSlotSelection.getPlayer().getPlayerId());
+		}
+		todayRoster.setPermId(0);
+		todayRoster.setActivePlayersCount(myPlayersToday.size());
+		todayRoster.setTotalPts(totalPointsOfCurrentRoster);	
+			
+		gamedateRosters.add(todayRoster);
 	}
 	
 	public GameDateRosterModel fillTodaysGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calcId) throws Exception{

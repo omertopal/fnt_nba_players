@@ -1,15 +1,9 @@
 package org.nba.players.opta;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.nba.players.common.CommonUtils;
-import org.nba.players.entity.Schedule;
-import org.nba.players.util.PlayerConstants;
 import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
