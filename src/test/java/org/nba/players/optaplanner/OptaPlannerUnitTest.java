@@ -28,7 +28,7 @@ public class OptaPlannerUnitTest {
             unsolvedNbaOptaSchedule.getSelectionList().add(new PlayerSlotSelection());
         }
 
-        unsolvedNbaOptaSchedule.getGameDateList().addAll(Arrays.asList(new Integer[] { 1, 2, 3 }));
+        //unsolvedNbaOptaSchedule.getGameDateList().addAll(Arrays.asList(new Integer[] { 1, 2, 3 }));
         unsolvedNbaOptaSchedule.getPositionSlotList().addAll(Arrays.asList(new Integer[] { 1, 2,3,4,5 }));
         
         List<OptaPlayer> myPlayers = new ArrayList<>();
