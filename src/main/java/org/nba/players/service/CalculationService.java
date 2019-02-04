@@ -197,6 +197,8 @@ public class CalculationService implements IPermService {
 		
 		int nextCalculationId = getNextCalculationId();
 		
+		int optaCounter = 7;
+		
 		for (GameDates currGameDate : gameDates) {			
 			myPlayersToday.clear();
 			int playerOrder = 1;
@@ -243,10 +245,11 @@ public class CalculationService implements IPermService {
 				if (CommonUtils.STANDART_METHOD.equals(method)) {
 					gamedateRosters.add(fillTodaysGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday,nextCalculationId));
 				}else if(CommonUtils.OPTA_METHOD.equals(method)) {
-					optaFillTodaysGameDateRoster(gamedateRosters,currGameDate, myPlayersToday,1000000+nextCalculationId);
+					if(optaCounter > 0 ) optaFillTodaysGameDateRoster(gamedateRosters,currGameDate, myPlayersToday,1000000+nextCalculationId);
 				}
 				
 			}
+			optaCounter --;
 			myPlayersToday.clear();
 			
 			System.out.println("currGameDate:" + currGameDate.toString());
@@ -385,12 +388,42 @@ public class CalculationService implements IPermService {
         
         for (PlayerSlotSelection playerSlotSelection : filteredList) {
         	totalPointsOfCurrentRoster += playerSlotSelection.getPlayer().getAvgPts();
-			if(CommonUtils.getPlayerSkills().get(PlayerConstants.POINT_GUARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setPg(playerSlotSelection.getPlayer().getPlayerId());
-			if(CommonUtils.getPlayerSkills().get(PlayerConstants.SHOOTING_GUARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setSg(playerSlotSelection.getPlayer().getPlayerId());
-			if(CommonUtils.getPlayerSkills().get(PlayerConstants.SMALL_FORWARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setSf(playerSlotSelection.getPlayer().getPlayerId());
-			if(CommonUtils.getPlayerSkills().get(PlayerConstants.POWER_FORWARD).equals(playerSlotSelection.getPositionSlot())) todayRoster.setPf(playerSlotSelection.getPlayer().getPlayerId());
-			if(CommonUtils.getPlayerSkills().get(PlayerConstants.CENTER).equals(playerSlotSelection.getPositionSlot())) todayRoster.setC(playerSlotSelection.getPlayer().getPlayerId());
-			if(CommonUtils.getPlayerSkills().get(PlayerConstants.UTIL_PLAYER).equals(playerSlotSelection.getPositionSlot())) todayRoster.setUt(playerSlotSelection.getPlayer().getPlayerId());
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.POINT_GUARD).equals(playerSlotSelection.getPositionSlot())) {
+				PlayerModel modelPg = new PlayerModel();
+				modelPg.setName(playerSlotSelection.getPlayer().getName());
+				todayRoster.setPgModel(modelPg);
+				todayRoster.setPg(playerSlotSelection.getPlayer().getPlayerId());
+			}
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.SHOOTING_GUARD).equals(playerSlotSelection.getPositionSlot())) {
+				PlayerModel modelSg = new PlayerModel();
+				modelSg.setName(playerSlotSelection.getPlayer().getName());
+				todayRoster.setSgModel(modelSg);
+				todayRoster.setSg(playerSlotSelection.getPlayer().getPlayerId());
+			}
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.SMALL_FORWARD).equals(playerSlotSelection.getPositionSlot())) {
+				PlayerModel modelSf = new PlayerModel();
+				modelSf.setName(playerSlotSelection.getPlayer().getName());
+				todayRoster.setSfModel(modelSf);
+				todayRoster.setSf(playerSlotSelection.getPlayer().getPlayerId());
+			}
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.POWER_FORWARD).equals(playerSlotSelection.getPositionSlot())) {
+				PlayerModel modelPf = new PlayerModel();
+				modelPf.setName(playerSlotSelection.getPlayer().getName());
+				todayRoster.setPfModel(modelPf);
+				todayRoster.setPf(playerSlotSelection.getPlayer().getPlayerId());
+			}
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.CENTER).equals(playerSlotSelection.getPositionSlot())) {
+				PlayerModel modelC = new PlayerModel();
+				modelC.setName(playerSlotSelection.getPlayer().getName());
+				todayRoster.setcModel(modelC);
+				todayRoster.setC(playerSlotSelection.getPlayer().getPlayerId());
+			}
+			if(CommonUtils.getPlayerSkills().get(PlayerConstants.UTIL_PLAYER).equals(playerSlotSelection.getPositionSlot())) {
+				PlayerModel modelUt = new PlayerModel();
+				modelUt.setName(playerSlotSelection.getPlayer().getName());
+				todayRoster.setUtModel(modelUt);
+				todayRoster.setUt(playerSlotSelection.getPlayer().getPlayerId());
+			}
 		}
 		todayRoster.setPermId(0);
 		todayRoster.setActivePlayersCount(myPlayersToday.size());
@@ -419,12 +452,30 @@ public class CalculationService implements IPermService {
 				currGameDateRoster.setTotalPts(new Double(0));
 				currGameDateRoster.setCalcId(calcId);
 				
-				if(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD) != null) currGameDateRoster.setPg(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD).getId());
-				if(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD) != null) currGameDateRoster.setSg(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD).getId());
-				if(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD) != null) currGameDateRoster.setSf(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD).getId());
-				if(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD) != null) currGameDateRoster.setPf(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD).getId());
-				if(rosterOfCurrentPermutation.get(PlayerConstants.CENTER) != null) currGameDateRoster.setC(rosterOfCurrentPermutation.get(PlayerConstants.CENTER).getId());
-				if(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER) != null) currGameDateRoster.setUt(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER).getId());
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD) != null) {
+					currGameDateRoster.setPg(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD).getId());
+					currGameDateRoster.setPgModel(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD));
+				}
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD) != null) {
+					currGameDateRoster.setSg(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD).getId());
+					currGameDateRoster.setSgModel(rosterOfCurrentPermutation.get(PlayerConstants.SHOOTING_GUARD));
+				}
+				if(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD) != null) {
+					currGameDateRoster.setSf(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD).getId());
+					currGameDateRoster.setSfModel(rosterOfCurrentPermutation.get(PlayerConstants.SMALL_FORWARD));
+				}
+				if(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD) != null) {
+					currGameDateRoster.setPf(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD).getId());
+					currGameDateRoster.setPfModel(rosterOfCurrentPermutation.get(PlayerConstants.POWER_FORWARD));
+				}
+				if(rosterOfCurrentPermutation.get(PlayerConstants.CENTER) != null) {
+					currGameDateRoster.setC(rosterOfCurrentPermutation.get(PlayerConstants.CENTER).getId());
+					currGameDateRoster.setcModel(rosterOfCurrentPermutation.get(PlayerConstants.CENTER));
+				}
+				if(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER) != null) {
+					currGameDateRoster.setUt(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER).getId());
+					currGameDateRoster.setUtModel(rosterOfCurrentPermutation.get(PlayerConstants.UTIL_PLAYER));
+				}
 				
 				currGameDateRoster.setPermId(currentPermutation.getId());
 				currGameDateRoster.setActivePlayersCount(myPlayersToday.size());

@@ -19,6 +19,18 @@ public class GameDateRosterModel {
 	
     private int ut;
     
+    private PlayerModel pgModel;  
+	
+    private PlayerModel sgModel;  
+	
+    private PlayerModel sfModel;  
+	
+    private PlayerModel pfModel;  
+	
+    private PlayerModel cModel;  
+	
+    private PlayerModel utModel;
+    
     private int permId;
     
     private int calcId;
@@ -123,6 +135,54 @@ public class GameDateRosterModel {
 
 	public void setEquivalentPermutations(List<GameDateRosterEqModel> equivalentPermutations) {
 		this.equivalentPermutations = equivalentPermutations;
+	}
+
+	public PlayerModel getPgModel() {
+		return pgModel;
+	}
+
+	public void setPgModel(PlayerModel pgModel) {
+		this.pgModel = pgModel;
+	}
+
+	public PlayerModel getSgModel() {
+		return sgModel;
+	}
+
+	public void setSgModel(PlayerModel sgModel) {
+		this.sgModel = sgModel;
+	}
+
+	public PlayerModel getSfModel() {
+		return sfModel;
+	}
+
+	public void setSfModel(PlayerModel sfModel) {
+		this.sfModel = sfModel;
+	}
+
+	public PlayerModel getPfModel() {
+		return pfModel;
+	}
+
+	public void setPfModel(PlayerModel pfModel) {
+		this.pfModel = pfModel;
+	}
+
+	public PlayerModel getcModel() {
+		return cModel;
+	}
+
+	public void setcModel(PlayerModel cModel) {
+		this.cModel = cModel;
+	}
+
+	public PlayerModel getUtModel() {
+		return utModel;
+	}
+
+	public void setUtModel(PlayerModel utModel) {
+		this.utModel = utModel;
 	}
 
 	
