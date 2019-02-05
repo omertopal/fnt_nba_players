@@ -36,6 +36,7 @@ public class PlayerController extends NbaController{
 		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
 	}
 	
+	@CrossOrigin(origins = {"http://localhost:3000", "http://someserver:8084"})
 	@GetMapping("myPlayers")
 	public ResponseEntity<List<Player>> getMyPlayers() {
 		List<Player> list = playerService.getMyPlayers();

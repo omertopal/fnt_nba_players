@@ -22,7 +22,7 @@ public class CalculationController {
 	@Autowired
 	private IPermService permService;
 	
-	
+	@CrossOrigin(origins = {"http://localhost:3000", "http://someserver:8084"})
 	@GetMapping("calcUsage/{method}")
 	public ResponseEntity<List<GameDateRosterModel>> calcUsage(@PathVariable(name="method",required=true) String method) {
 		

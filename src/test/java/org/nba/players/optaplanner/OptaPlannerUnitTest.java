@@ -54,7 +54,7 @@ public class OptaPlannerUnitTest {
         unsolvedNbaOptaSchedule.setPlayerList(myPlayers);
     }
 
-    @Test
+    //@Test
     public void test_whenCustomJavaSolver() {
 
         SolverFactory<NbaOptaSchedule> solverFactory = SolverFactory.createFromXmlResource("nbaScheduleSolverConfiguration.xml");

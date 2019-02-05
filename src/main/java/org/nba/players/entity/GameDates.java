@@ -3,6 +3,7 @@ package org.nba.players.entity;
 import java.io.Serializable;
 import java.sql.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -15,6 +16,9 @@ public class GameDates implements Serializable {
 	
 	@Id
 	private Date gameDate;
+	
+	@Column(name="gameCount")
+	private int gameCount;
 	
 	public GameDates(){
 		
@@ -31,6 +35,12 @@ public class GameDates implements Serializable {
 		this.gameDate = (Date) gameDate.clone();
 	}
 	
+	public int getGameCount() {
+		return gameCount;
+	}
+	public void setGameCount(int gameCount) {
+		this.gameCount = gameCount;
+	}
 	@Override
 	public String toString() {
 		return "GameDates [gameDate=" + gameDate.toString() + "]";

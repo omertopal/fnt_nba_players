@@ -1,5 +1,0 @@
-
-SELECT  ID, TEAM, NAME,   IS_PG, IS_SG, IS_SF,   IS_PF, IS_C, IS_MY,   IS_FA, CALC, AVG_PTS, INJ_end, rowid
-FROM NBA.PLAYERS where is_my in(1,2) or team ='XX' or name like '%xx%'  order by avg_pts desc
-
- --UPDATE PLAYERS T SET T.IS_MY = 91 WHERE T.IS_MY = 2

@@ -1,6 +1,6 @@
 package org.nba.players.dao;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 	@Override
 	public int getNextCalcId() {
 		String hql = "select ROSTER_CALC_SEQ.nextval FROM dual";
-		int returnValue = ((BigDecimal) entityManager.createNativeQuery(hql).getResultList().get(0)).intValue();
+		int returnValue = ((BigInteger) entityManager.createNativeQuery(hql).getResultList().get(0)).intValue();
 		entityManager.close();
 		return returnValue;
 	}

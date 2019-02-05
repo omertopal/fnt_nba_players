@@ -57,6 +57,9 @@ public class Player implements Serializable {
 	
 	@Column(name="INJ_END")	
 	private Date injEnd;
+	
+	@Column(name="GAMES_PLAYED")	
+	private int gamesPlayed;
 
 	public int getId() {
 		return id;
@@ -160,6 +163,14 @@ public class Player implements Serializable {
 
 	public void setInjEnd(Date injEnd) {
 		this.injEnd = injEnd;
+	}
+
+	public int getGamesPlayed() {
+		return gamesPlayed;
+	}
+
+	public void setGamesPlayed(int gamesPlayed) {
+		this.gamesPlayed = gamesPlayed;
 	}
 
 }
