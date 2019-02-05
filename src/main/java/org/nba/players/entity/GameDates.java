@@ -17,7 +17,7 @@ public class GameDates implements Serializable {
 	@Id
 	private Date gameDate;
 	
-	@Column(name="gameCount")
+	@Column(name="GAME_COUNT")
 	private int gameCount;
 	
 	public GameDates(){
