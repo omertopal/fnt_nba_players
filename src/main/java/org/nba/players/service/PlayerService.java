@@ -3,6 +3,7 @@ package org.nba.players.service;
 import java.util.List;
 
 import org.nba.players.dao.IPlayerDAO;
+import org.nba.players.dto.PlayerDTO;
 import org.nba.players.entity.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlayerService implements IPlayerService {
 	@Autowired
-	private IPlayerDAO playerDAO;
+	private IPlayerDAO playerDAO;	
 	
 	@Override
 	public List<Player> getAllPlayers() {
@@ -30,7 +31,7 @@ public class PlayerService implements IPlayerService {
 	}
 	
 	@Override
-	public synchronized boolean addPlayer(Player player){
+	public synchronized boolean addPlayer(PlayerDTO player){
         if (playerDAO.playerExists(player.getName(), player.getTeam())) {
             return false;
         } else {
@@ -39,7 +40,7 @@ public class PlayerService implements IPlayerService {
         }
 	}
 	@Override
-	public void updatePlayer(Player player) {
+	public void updatePlayer(PlayerDTO player) {
 		playerDAO.updatePlayer(player);
 	}
 	@Override

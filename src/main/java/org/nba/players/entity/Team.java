@@ -1,22 +1,16 @@
 package org.nba.players.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="TEAMS")
-public class Team implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
+public class Team{	
 	
 	@Id
-	@Column(name="CODE")
+	@Column(name="CODE",length = 50)
 	private String code;
 	
 	@Column(name="NAME")

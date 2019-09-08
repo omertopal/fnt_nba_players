@@ -1,29 +1,26 @@
 package org.nba.players.entity;
 
-import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="PLAYERS")
 @NamedNativeQuery(name="getMyAllPlayers", query = "select * from players where is_my = 1 or is_potential = 1 order by avg_pts ", resultClass = Player.class)
-public class Player implements Serializable {
+public class Player extends BaseEntity {	
 	
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="id")
-    private int id;  
-	
-	@Column(name="team")	
-	private String team;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "TEAM", nullable = false)
+	private Team team;
 	
 	@Column(name="name")	
 	private String name;
@@ -61,19 +58,11 @@ public class Player implements Serializable {
 	@Column(name="GAMES_PLAYED")	
 	private int gamesPlayed;
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getTeam() {
+	public Team getTeam() {
 		return team;
 	}
 
-	public void setTeam(String team) {
+	public void setTeam(Team team) {
 		this.team = team;
 	}
 

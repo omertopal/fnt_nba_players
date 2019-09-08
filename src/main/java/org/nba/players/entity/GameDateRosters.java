@@ -1,6 +1,5 @@
 package org.nba.players.entity;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,24 +9,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="GAME_DATE_ROSTERS")
-public class GameDateRosters implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="GAME_DATE_ROSTERS_SEQ")
-	@SequenceGenerator(name="GAME_DATE_ROSTERS_SEQ", sequenceName="GAME_DATE_ROSTERS_SEQ", allocationSize=1)
-	@Column(name="id")
-    private int id;
+public class GameDateRosters extends BaseEntity {
 	
 	@Column(name="GAME_DATE")
 	private Date gameDate;
@@ -48,7 +35,6 @@ public class GameDateRosters implements Serializable {
 	private Double totalPts; 
 	
 	@OneToMany( fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="gameDateRosterId", orphanRemoval = true)
-    //@JoinColumn(name = "gameDateRosterId", nullable = false, insertable = false, updatable = false)
     private List<GameDateRostersEq> equivalentList = new ArrayList<>();
 	
 	@Column(name="pg")
@@ -68,18 +54,10 @@ public class GameDateRosters implements Serializable {
 	
 	@Column(name="ut")
     private int ut;
-
-	public int getId() {
-		return id;
-	}
 	
 	public void addChild(GameDateRostersEq equivalentEntity) {
 		equivalentList.add(equivalentEntity);
 		equivalentEntity.setGameDateRosterId(this);
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public Date getGameDate() {

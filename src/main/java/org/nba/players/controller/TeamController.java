@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("teams")
+@RequestMapping("/teams")
 public class TeamController {
 	@Autowired
 	private ITeamService teamService;
 	
-	@GetMapping("allteams")
+	@GetMapping(produces = "application/json")
 	public ResponseEntity<List<Team>> getAllTeams() {
 		List<Team> list = teamService.getAllTeams();
 		return new ResponseEntity<List<Team>>(list, HttpStatus.OK);

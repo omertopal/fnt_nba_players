@@ -24,9 +24,8 @@ public class TeamDAO implements ITeamDAO {
 	}
 
 	@Override
-	public Team getTeamById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Team getTeamByCode(String code) {
+		return entityManager.find(Team.class, code);
 	}
 
 	@Override

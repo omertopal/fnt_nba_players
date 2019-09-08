@@ -1,6 +1,5 @@
 package org.nba.players.entity;
 
-import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Column;
@@ -10,10 +9,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="GAME_DATES")
-public class GameDates implements Serializable {
+public class GameDates {
 
-	private static final long serialVersionUID = 1L;
-	
 	@Id
 	private Date gameDate;
 	

@@ -6,7 +6,7 @@ import org.nba.players.entity.Team;
 
 public interface ITeamDAO {
 	List<Team> getAllTeams();
-	Team getTeamById(String id);
+	Team getTeamByCode(String code);
 	void addTeam(Team team);
     void updateTeam(Team team);
     void deleteTeam(String code);

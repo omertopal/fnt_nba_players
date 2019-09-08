@@ -2,14 +2,15 @@ package org.nba.players.dao;
 
 import java.util.List;
 
+import org.nba.players.dto.PlayerDTO;
 import org.nba.players.entity.Player;
 
 public interface IPlayerDAO {
 	List<Player> getAllPlayers();
 	public List<Player> getMyPlayers();	
 	Player getPlayerById(int id);
-	void addPlayer(Player player);
-    void updatePlayer(Player player);
+	void addPlayer(PlayerDTO player);
+    void updatePlayer(PlayerDTO player);
     void deletePlayer(int playerId);
-    boolean playerExists(String title, String category);
+    boolean playerExists(String name, String team);
 }

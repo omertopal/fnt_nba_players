@@ -19,9 +19,8 @@ public class TeamService implements ITeamService {
 	}
 
 	@Override
-	public Team getTeamById(String code) {
-		// TODO Auto-generated method stub
-		return null;
+	public Team getTeamByCode(String code) {
+		return teamDAO.getTeamByCode(code);
 	}
 
 	@Override

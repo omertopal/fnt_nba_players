@@ -1,23 +1,12 @@
 package org.nba.players.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="PERM_6_1")
-public class PERM_6_1 implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="id")
-    private int id;  
+public class PERM_6_1 extends BaseEntity {
 	
 	@Column(name="pg")
     private int pg;  
@@ -36,15 +25,7 @@ public class PERM_6_1 implements Serializable {
 	
 	@Column(name="ut")
     private int ut;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
+	
 	public int getPg() {
 		return pg;
 	}
