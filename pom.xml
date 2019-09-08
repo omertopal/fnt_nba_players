@@ -15,7 +15,7 @@
   </parent>
   
   <properties>
-  		<start-class>com.topal.erp.ErpApplication</start-class>
+  		<start-class>org.nba.players.NbaApplication</start-class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>       
   </properties> 

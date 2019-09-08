@@ -16,10 +16,10 @@ import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-public class MyApplication {  
+public class NbaApplication {  
 	
 	public static void main(String[] args) {
-		SpringApplication.run(MyApplication.class, args);
+		SpringApplication.run(NbaApplication.class, args);
     }   
 	
 	@Bean
