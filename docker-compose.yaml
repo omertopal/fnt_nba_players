@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   be_nba:
-    image: omertopal/be_erp:latest
+    image: omertopal/be_nba:latest
     container_name: be_nba
     ports:
       - 8084:8084
@@ -28,7 +28,7 @@ services:
       - nbaMysqlVol:/var/lib/docker/volumes/nbamysql
   nba_phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: nba_phpmyadmin
     environment: 
         PMA_HOST: nba_mysql
     user: root
