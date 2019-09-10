@@ -3,6 +3,7 @@ package org.nba.players.service;
 import java.util.List;
 
 import org.nba.players.dao.ITeamDAO;
+import org.nba.players.dto.PlayerDTO;
 import org.nba.players.entity.Team;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,20 +26,23 @@ public class TeamService implements ITeamService {
 
 	@Override
 	public boolean addTeam(Team team) {
-		// TODO Auto-generated method stub
-		return false;
+		if (teamDAO.teamExists(team.getCode())) {
+            return false;
+        } else {
+        	teamDAO.addTeam(team);
+            return true;
+        }
 	}
 
 	@Override
 	public void updateTeam(Team team) {
-		// TODO Auto-generated method stub
+		teamDAO.updateTeam(team);
 
 	}
 
 	@Override
 	public void deleteTeam(String code) {
-		// TODO Auto-generated method stub
+		teamDAO.deleteTeam(code);
 
 	}
-
 }

@@ -1,6 +1,13 @@
 version: '3.3'
 
-services:  
+services:
+  be_nba:
+    image: omertopal/be_nba:1.1
+    container_name: be_nba
+    ports:
+      - 8084:8084
+    depends_on:
+      - nbamysql
   nbamysql:
     image: mysql:8.0
     container_name: nbamysql
@@ -10,7 +17,7 @@ services:
       - MYSQL_PASSWORD=root
     user: root
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes:
       - nbaMysqlVol:/var/lib/docker/volumes/nbamysql
   nba_phpmyadmin:

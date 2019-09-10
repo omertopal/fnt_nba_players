@@ -8,6 +8,7 @@ import org.nba.players.entity.Player;
 public interface IPlayerDAO {
 	List<Player> getAllPlayers();
 	public List<Player> getMyPlayers();	
+	public List<Player> getInjuredPlayers();
 	Player getPlayerById(int id);
 	void addPlayer(PlayerDTO player);
     void updatePlayer(PlayerDTO player);

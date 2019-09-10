@@ -45,6 +45,13 @@ public class PlayerDAO implements IPlayerDAO {
 		return (List<Player>) entityManager.createNamedQuery("getMyAllPlayers").getResultList();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Player> getInjuredPlayers() {
+		String hql = "FROM Player where injEnd is not null ORDER BY id";
+		return (List<Player>) entityManager.createQuery(hql).getResultList();
+	}
+	
 	@Override
 	public void addPlayer(PlayerDTO player) {
 		

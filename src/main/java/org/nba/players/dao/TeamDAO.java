@@ -30,26 +30,26 @@ public class TeamDAO implements ITeamDAO {
 
 	@Override
 	public void addTeam(Team team) {
-		// TODO Auto-generated method stub
-
+		entityManager.persist(team);
 	}
 
 	@Override
 	public void updateTeam(Team team) {
-		// TODO Auto-generated method stub
-
+		Team updatedTeam = getTeamByCode(team.getCode());
+		updatedTeam.setName(team.getName());
+		entityManager.flush();
 	}
 
 	@Override
 	public void deleteTeam(String code) {
-		// TODO Auto-generated method stub
-
+		entityManager.remove(getTeamByCode(code));
 	}
 
 	@Override
 	public boolean teamExists(String code) {
-		// TODO Auto-generated method stub
-		return false;
+		String hql = "FROM Team  WHERE code = ?1 ";
+		int count = entityManager.createQuery(hql).setParameter(1, code).getResultList().size();
+		return count > 0 ? true : false;
 	}
 
 }

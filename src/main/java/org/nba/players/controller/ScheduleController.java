@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("schedule")
+@RequestMapping("/schedule")
 public class ScheduleController {
 	@Autowired
 	private IScheduleService scheduleService;
 	
-	@GetMapping("allSchedule")
+	@GetMapping(produces = "application/json")
 	public ResponseEntity<List<Schedule>> getAllSchedule() {
 		List<Schedule> list = scheduleService.getAllSchedule();
 		return new ResponseEntity<List<Schedule>>(list, HttpStatus.OK);

@@ -41,6 +41,12 @@ public class PlayerController extends NbaController{
 		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
 	}
 	
+	@GetMapping(path="/injured",produces = "application/json")
+	public ResponseEntity<List<Player>> getInjuredPlayers() {
+		List<Player> list = playerService.getInjuredPlayers();
+		return new ResponseEntity<List<Player>>(list, HttpStatus.OK);
+	}
+	
 	@PostMapping(produces = "application/json")
 	public ResponseEntity<Void> addPlayer(@RequestBody PlayerDTO player) {
         boolean flag = playerService.addPlayer(player);
