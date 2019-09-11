@@ -1,6 +1,7 @@
 package org.nba.players.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class GameDateRosterModel {	
@@ -18,6 +19,8 @@ public class GameDateRosterModel {
     private int c;  
 	
     private int ut;
+    
+    Timestamp runTime;
     
     private PlayerModel pgModel;  
 	
@@ -63,6 +66,14 @@ public class GameDateRosterModel {
 
 	public void setPg(int pg) {
 		this.pg = pg;
+	}
+
+	public Timestamp getRunTime() {
+		return runTime;
+	}
+
+	public void setRunTime(Timestamp runTime) {
+		this.runTime = runTime;
 	}
 
 	public int getSg() {

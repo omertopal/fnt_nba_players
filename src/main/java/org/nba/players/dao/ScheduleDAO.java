@@ -19,7 +19,8 @@ public class ScheduleDAO implements IScheduleDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Schedule> getAllSchedule() {
-		String hql = "FROM Schedule where  gameDate >= CURRENT_DATE ORDER BY gameDate,home";
+		String hql = "FROM Schedule  ORDER BY gameDate,home";
+		//String hql = "FROM Schedule where  gameDate >= CURRENT_DATE ORDER BY gameDate,home";
 		List<Schedule> returnValue = (List<Schedule>) entityManager.createQuery(hql).getResultList();
 		entityManager.close();
 		return returnValue;

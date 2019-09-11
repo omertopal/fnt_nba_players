@@ -19,7 +19,8 @@ public class GameDatesDAO implements IGameDatesDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<GameDates> getGameDates(){
-		String hql = "FROM GameDates where gameDate >= CURRENT_DATE ORDER BY gameDate ";
+		//String hql = "FROM GameDates where gameDate >= CURRENT_DATE ORDER BY gameDate ";
+		String hql = "FROM GameDates  ORDER BY gameDate ";
 		List<GameDates> returnValue = (List<GameDates>) entityManager.createQuery(hql).getResultList();
 		entityManager.close();
 		return returnValue;

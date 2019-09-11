@@ -197,7 +197,7 @@ public class CalculationService implements IPermService {
 		
 		int calculationId = getNextCalculationId();
 		
-		for (GameDates currGameDate : gameDates) {			
+		for (GameDates currGameDate : gameDates) {
 			myPlayersToday.clear();
 			int playerOrder = 1;
 			
@@ -217,7 +217,8 @@ public class CalculationService implements IPermService {
 						.collect(Collectors.toList());
 				
 				List<Schedule> scheduledGamesOfPlayersTeamAtCurrentDate= scheduledGamesAtCurrentDate.stream()
-						.filter(scheduleIns -> scheduleIns.getAway().equals(currentPlayer.getTeam()) || scheduleIns.getHome().equals(currentPlayer.getTeam()))
+						.filter(scheduleIns -> scheduleIns.getAway().equals(currentPlayer.getTeam().getCode()) 
+								|| scheduleIns.getHome().equals(currentPlayer.getTeam().getCode()))
 						.collect(Collectors.toList());								
 				
 				if (!scheduledGamesOfPlayersTeamAtCurrentDate.isEmpty()){
@@ -256,6 +257,11 @@ public class CalculationService implements IPermService {
 	
 	protected int getNextCalculationId(){
 		return gameDateRostersDAO.getNextCalcId();
+	}
+	
+	public List<GameDateRosterModel> getAllGameDateRosters () {
+		return gameDateRostersDAO.getAllGameDateRosters();
+		
 	}
 	
 	private boolean isPlayerInjured(Player currentPlayer, GameDates currGameDate) {

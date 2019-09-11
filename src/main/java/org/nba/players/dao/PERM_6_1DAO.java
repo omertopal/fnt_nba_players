@@ -22,7 +22,7 @@ public class PERM_6_1DAO implements IPERM_6_1DAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PermModel> getAllPerm() {
-		String hql = "FROM PERM_6_1 order by decode(pg,0,99,pg),decode(sg,0,99,sg),decode(sf,0,99,sf),decode(pf,0,99,pf),decode(c,0,99,c),decode(ut,0,99,ut) ";
+		String hql = "FROM PERM_6_1";// order by if(pg=0,99,pg),if(sg=0,99,sg),if(sf=0,99,sf),if(pf=0,99,pf),if(c=0,99,c),if(ut=0,99,ut) ";
 		try {
 			List<PermModel> returnValue = CommonUtils.mapFromPermEntity(PERM_6_1.class,(ArrayList<PERM_6_1>) entityManager.createQuery(hql).getResultList());
 			entityManager.close();

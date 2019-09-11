@@ -7,4 +7,6 @@ import org.nba.players.model.GameDateRosterModel;
 public interface IPermService {
 	
 	List<GameDateRosterModel> getGameDateRosters(String method) throws Exception;
+	
+	public List<GameDateRosterModel> getAllGameDateRosters() throws Exception;
 }
