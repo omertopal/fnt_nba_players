@@ -5,6 +5,7 @@ import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
@@ -15,7 +16,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name="PLAYERS")
 @NamedNativeQuery(name="getMyAllPlayers", query = "select * from players where is_my = 1 or is_potential = 1 order by avg_pts ", resultClass = Player.class)
-public class Player extends BaseEntity {	
+public class Player {	
+	
+	@Id
+	@Column(name="ID")
+	private int id;
 	
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -55,6 +60,14 @@ public class Player extends BaseEntity {
 	@Column(name="INJ_END")	
 	private Date injEnd;
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	@Column(name="GAMES_PLAYED")	
 	private int gamesPlayed;
 

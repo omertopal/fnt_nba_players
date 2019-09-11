@@ -12,6 +12,7 @@ spring:
     testWhileIdle: true
     validationQuery: SELECT 1
     driver-class-name: com.mysql.jdbc.Driver
+    initialization-mode: always
   jpa:
     hibernate:
         ddl-auto: update
