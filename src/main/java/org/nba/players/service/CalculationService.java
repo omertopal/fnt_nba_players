@@ -1,5 +1,6 @@
 package org.nba.players.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -26,6 +27,8 @@ import org.nba.players.dao.IPERM_6_8DAO;
 import org.nba.players.dao.IPERM_6_9DAO;
 import org.nba.players.dao.IPlayerDAO;
 import org.nba.players.dao.IScheduleDAO;
+import org.nba.players.dao.SeqGameDateRostersDAO;
+import org.nba.players.dto.CalculationIdDTO;
 import org.nba.players.entity.GameDates;
 import org.nba.players.entity.Player;
 import org.nba.players.entity.Schedule;
@@ -43,7 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CalculationService implements IPermService {
+public class CalculationService implements ICalcService {
 	
 	@Autowired
 	private IPERM_6_1DAO perm6_1DAO;
@@ -80,7 +83,16 @@ public class CalculationService implements IPermService {
 	private IGameDateRostersDAO gameDateRostersDAO;	
 	
 	@Autowired
+	private SeqGameDateRostersDAO seqGameDateRostersDAO;	
+	
+	@Autowired
 	private IPlayerDAO playerDAO;	
+	
+	@Override
+	public List<CalculationIdDTO> calculationIdList(){
+		
+		return gameDateRostersDAO.calculationIdList();
+	}
 	
 	@Override
 	public List<GameDateRosterModel> getGameDateRosters(String method) throws Exception {
@@ -197,6 +209,8 @@ public class CalculationService implements IPermService {
 		
 		int calculationId = getNextCalculationId();
 		
+		Timestamp runtime = new Timestamp(System.currentTimeMillis());
+		
 		for (GameDates currGameDate : gameDates) {
 			myPlayersToday.clear();
 			int playerOrder = 1;
@@ -242,9 +256,9 @@ public class CalculationService implements IPermService {
 			if(myPlayersToday.size()>0 && myPlayersToday.size()<13){
 				
 				if (CommonUtils.STANDART_METHOD.equals(method)) {
-					gamedateRosters.add(fillTodaysGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday, calculationId));
+					gamedateRosters.add(fillTodaysGameDateRoster(getPermutations(myPlayersToday), currGameDate, myPlayersToday, calculationId, runtime));
 				}else if(CommonUtils.OPTA_METHOD.equals(method)) {
-					if(optaCounter > 0 ) optaFillTodaysGameDateRoster(gamedateRosters,currGameDate, myPlayersToday, calculationId);
+					if(optaCounter > 0 ) optaFillTodaysGameDateRoster(gamedateRosters,currGameDate, myPlayersToday, calculationId, runtime);
 				}
 				
 			}
@@ -255,12 +269,12 @@ public class CalculationService implements IPermService {
 		}
 	}
 	
-	protected int getNextCalculationId(){
-		return gameDateRostersDAO.getNextCalcId();
+	protected synchronized int getNextCalculationId(){
+		return seqGameDateRostersDAO.getNextCalcId();
 	}
 	
-	public List<GameDateRosterModel> getAllGameDateRosters () {
-		return gameDateRostersDAO.getAllGameDateRosters();
+	public List<GameDateRosterModel> getAllGameDateRosters (int calcId) {
+		return gameDateRostersDAO.getAllGameDateRosters(calcId);
 		
 	}
 	
@@ -364,7 +378,7 @@ public class CalculationService implements IPermService {
 		return playersMap;
 	}
 	
-	private void optaFillTodaysGameDateRoster(List<GameDateRosterModel> gamedateRosters, GameDates gameDate, List<PlayerModel> myPlayersToday, int calculationId) throws Exception {
+	private void optaFillTodaysGameDateRoster(List<GameDateRosterModel> gamedateRosters, GameDates gameDate, List<PlayerModel> myPlayersToday, int calculationId,Timestamp runtime) throws Exception {
 		
 		NbaOptaSchedule unsolvedNbaOptaSchedule = new NbaOptaSchedule();
 		
@@ -388,6 +402,7 @@ public class CalculationService implements IPermService {
         todayRoster.setGameDate(gameDate.getGameDate());
         todayRoster.setTotalPts(new Double(0));
         todayRoster.setCalcId(calculationId);
+        todayRoster.setRunTime(runtime);
         Double totalPointsOfCurrentRoster = 0.0;
         
         for (PlayerSlotSelection playerSlotSelection : filteredList) {
@@ -436,7 +451,7 @@ public class CalculationService implements IPermService {
 		gamedateRosters.add(todayRoster);
 	}
 	
-	public GameDateRosterModel fillTodaysGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calculationId) throws Exception{
+	public GameDateRosterModel fillTodaysGameDateRoster (List<PermModel> permutations,GameDates currGameDate,List<PlayerModel> myPlayersToday, int calculationId,Timestamp runtime) throws Exception{
 		GameDateRosterModel currGameDateRoster = new GameDateRosterModel();
 		currGameDateRoster.setEquivalentPermutations(new ArrayList<>());
 		Double highestTotalPointsOfDay = new Double(0);
@@ -455,6 +470,7 @@ public class CalculationService implements IPermService {
 				currGameDateRoster.setGameDate(currGameDate.getGameDate());
 				currGameDateRoster.setTotalPts(new Double(0));
 				currGameDateRoster.setCalcId(calculationId);
+				currGameDateRoster.setRunTime(runtime);
 				
 				if(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD) != null) {
 					currGameDateRoster.setPg(rosterOfCurrentPermutation.get(PlayerConstants.POINT_GUARD).getId());

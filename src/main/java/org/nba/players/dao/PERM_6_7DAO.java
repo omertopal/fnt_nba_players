@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 
 import org.nba.players.common.CommonUtils;
 import org.nba.players.entity.PERM_6_7;
+import org.nba.players.entity.Player;
 import org.nba.players.model.PermModel;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,20 @@ public class PERM_6_7DAO implements IPERM_6_7DAO {
 	
 	@PersistenceContext	
 	private EntityManager entityManager;	
+	
+	@Override
+	public void save(PERM_6_7 perm67) {
+		entityManager.persist(perm67);
+	}
+	
+	
+    
+    @Override
+	public void deleteAll() {    	
+        String hql = " delete from  perm_6_7 ";
+		entityManager.createNativeQuery(hql).executeUpdate();
+		entityManager.close();
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override

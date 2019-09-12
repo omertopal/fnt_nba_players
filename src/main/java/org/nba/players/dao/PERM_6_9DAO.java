@@ -19,6 +19,18 @@ public class PERM_6_9DAO implements IPERM_6_9DAO {
 	@PersistenceContext	
 	private EntityManager entityManager;	
 	
+	@Override
+	public void save(PERM_6_9 perm69) {
+		entityManager.persist(perm69);
+	}
+	
+	@Override
+	public void deleteAll() {    	
+        String hql = " delete from  perm_6_9 ";
+		entityManager.createNativeQuery(hql).executeUpdate();
+		entityManager.close();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PermModel> getAllPerm() {

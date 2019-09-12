@@ -1,6 +1,5 @@
 package org.nba.players.dao;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.hibernate.transform.ResultTransformer;
+import org.nba.players.dto.CalculationIdDTO;
 import org.nba.players.entity.GameDateRosters;
 import org.nba.players.entity.GameDateRostersEq;
 import org.nba.players.entity.Player;
@@ -19,6 +20,7 @@ import org.nba.players.service.IPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Transactional
 @Repository
@@ -31,13 +33,31 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 	IPlayerService playerService;
 	
 	@Override
-	public int getNextCalcId() {
+	public List<CalculationIdDTO> calculationIdList(){
 		
-		String hql = "SELECT max(g.CALC_ID) FROM game_date_rosters g ";
-		List<Integer> maxCalcId = entityManager.createNativeQuery(hql).getResultList();
-		entityManager.close();
-		if(maxCalcId==null || maxCalcId.get(0) ==null) return 1;
-		return maxCalcId.get(0) +1;
+		String hql = "SELECT DISTINCT CALC_ID,RUN_TIME FROM game_date_rosters g order by CALC_ID desc";
+		Query query = entityManager.createNativeQuery(hql);
+		
+		return query.unwrap( org.hibernate.query.Query.class )
+		.setResultTransformer(
+			    new ResultTransformer() {
+			        @Override
+			        public Object transformTuple(
+			            Object[] tuple,
+			            String[] aliases) {
+			            return new CalculationIdDTO(			            		
+			                (int) tuple[0],
+			                (java.sql.Timestamp) tuple[1]
+			            );
+			        }
+			 
+			        @Override
+			        public List transformList(List collection) {
+			            return collection;
+			        }
+			    }
+			)
+			.getResultList();
 	}
 	
 	@Override
@@ -78,9 +98,9 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 		
 	}
 	
-	public List<GameDateRosterModel> getAllGameDateRosters (){
+	public List<GameDateRosterModel> getAllGameDateRosters (int calcId){
 		
-		String hql = "FROM GameDateRosters ";		
+		String hql = "FROM GameDateRosters where calcId="+calcId;		
 		List<GameDateRosters> rostersList = (List<GameDateRosters>) entityManager.createQuery(hql).getResultList();
 		
 		return mapToModel(rostersList);
@@ -170,7 +190,7 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 			roster.setTotalPts(curRosterModel.getTotalPts());
 			roster.setPermId(curRosterModel.getPermId());
 			roster.setCalcId(curRosterModel.getCalcId());
-			roster.setRunTime(new Timestamp(System.currentTimeMillis()));
+			roster.setRunTime(curRosterModel.getRunTime());
 			
 			//List<GameDateRostersEq> equivalentList = new ArrayList<>();
 			for(GameDateRosterEqModel model : curRosterModel.getEquivalentPermutations()) {

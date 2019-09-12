@@ -2,6 +2,7 @@ package org.nba.players.dao;
 
 import java.util.List;
 
+import org.nba.players.dto.CalculationIdDTO;
 import org.nba.players.model.GameDateRosterModel;
 
 public interface IGameDateRostersDAO {
@@ -11,6 +12,6 @@ public interface IGameDateRostersDAO {
 	public void updateAll(GameDateRosterModel roster);
 	public void remove(GameDateRosterModel roster);
 	void removeAll();
-	public int getNextCalcId();
-	public List<GameDateRosterModel> getAllGameDateRosters ();
+	public List<GameDateRosterModel> getAllGameDateRosters (int calcId);
+	public List<CalculationIdDTO> calculationIdList();
 }

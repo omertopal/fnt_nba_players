@@ -9,7 +9,19 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="PERM_6_7")
-public class PERM_6_7  {	
+public class PERM_6_7  {
+	
+	public PERM_6_7() {
+	}
+	
+	public PERM_6_7(int pg, int sg, int sf, int pf, int c, int ut) {
+		this.pg = pg;
+		this.sg = sg;
+		this.sf = sf;
+		this.pf = pf;
+		this.c = c;
+		this.ut = ut;
+	}
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

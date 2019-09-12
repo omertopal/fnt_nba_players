@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.nba.players.common.CommonUtils;
-import org.nba.players.entity.PERM_6_1;
 import org.nba.players.entity.PERM_6_2;
 import org.nba.players.model.PermModel;
 import org.springframework.stereotype.Repository;
@@ -19,6 +18,11 @@ public class PERM_6_2DAO implements IPERM_6_2DAO {
 	
 	@PersistenceContext	
 	private EntityManager entityManager;	
+	
+	@Override
+	public void save(PERM_6_2  perm62) {
+		entityManager.persist(perm62);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override

@@ -11,6 +11,18 @@ import javax.persistence.Table;
 @Table(name="PERM_6_1")
 public class PERM_6_1 {
 	
+	public PERM_6_1() {
+	}
+	
+	public PERM_6_1(int pg, int sg, int sf, int pf, int c, int ut) {
+		this.pg = pg;
+		this.sg = sg;
+		this.sf = sf;
+		this.pf = pf;
+		this.c = c;
+		this.ut = ut;
+	}
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ID")

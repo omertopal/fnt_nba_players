@@ -19,6 +19,11 @@ public class PERM_6_1DAO implements IPERM_6_1DAO {
 	@PersistenceContext	
 	private EntityManager entityManager;	
 	
+	@Override
+	public void save(PERM_6_1  perm61) {
+		entityManager.persist(perm61);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PermModel> getAllPerm() {
