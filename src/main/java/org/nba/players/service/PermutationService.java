@@ -1,5 +1,6 @@
 package org.nba.players.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nba.players.dao.IPERM_6_10DAO;
@@ -14,15 +15,8 @@ import org.nba.players.dao.IPERM_6_6DAO;
 import org.nba.players.dao.IPERM_6_7DAO;
 import org.nba.players.dao.IPERM_6_8DAO;
 import org.nba.players.dao.IPERM_6_9DAO;
-import org.nba.players.entity.PERM_6_1;
-import org.nba.players.entity.PERM_6_10;
 import org.nba.players.entity.PERM_6_11;
 import org.nba.players.entity.PERM_6_12;
-import org.nba.players.entity.PERM_6_2;
-import org.nba.players.entity.PERM_6_3;
-import org.nba.players.entity.PERM_6_4;
-import org.nba.players.entity.PERM_6_5;
-import org.nba.players.entity.PERM_6_6;
 import org.nba.players.entity.PERM_6_7;
 import org.nba.players.entity.PERM_6_8;
 import org.nba.players.entity.PERM_6_9;
@@ -61,72 +55,81 @@ public class PermutationService implements IPermService{
 	
 	@Override
 	public void generatePermutations(int size){
+		List<PermModel> modelList = new ArrayList<PermModel>();
 		if(size == 7) {
 			perm6_7DAO.deleteAll();
-			heapPermutation(new int[]{1,2,3,4,5,6,7},7,7,6);
+			permute(modelList,new int[]{1,2,3,4,5,6,7},6,7);
 		}else if(size == 8) {
 			perm6_8DAO.deleteAll();
-			heapPermutation(new int[]{1,2,3,4,5,6,7,8},8,8,6);
+			permute(modelList,new int[]{1,2,3,4,5,6,7,8},6,8);
 		}else if (size == 9) {
 			perm6_9DAO.deleteAll();
-			heapPermutation(new int[]{1,2,3,4,5,6,7,8,9},9,9,6);
+			permute(modelList,new int[]{1,2,3,4,5,6,7,8,9},6,9);
 		}else if (size == 10) {
 			perm6_10DAO.deleteAll();
-			heapPermutation(new int[]{1,2,3,4,5,6,7,8,9,10},10,10,6);
+			permute(modelList,new int[]{1,2,3,4,5,6,7,8,9,10},6,10);
+			perm6_10DAO.saveAll(modelList);
 		}else if(size == 11){
 			perm6_11DAO.deleteAll();
-			heapPermutation(new int[]{1,2,3,4,5,6,7,8,9,10,11},11,11,6);
+			permute(modelList,new int[]{1,2,3,4,5,6,7,8,9,10,11},6,11);
 		}else if(size == 12){
 			perm6_12DAO.deleteAll();
-			heapPermutation(new int[]{1,2,3,4,5,6,7,8,9,10,11,12},12,12,6);
+			permute(modelList,new int[]{1,2,3,4,5,6,7,8,9,10,11,12},6,12);
 		}
 		
 	}
 
-	private void writeToDB(int size,int originalSize, int a[]) {
+	private void writeToDB(List<PermModel> modelList, int originalSize, int a[]) {
+		modelList.add(new PermModel(a[0],a[1],a[2],a[3],a[4],a[5]));
 		
-		if(originalSize == 7) {
-			perm6_7DAO.save(new PERM_6_7(a[0],a[1],a[2],a[3],a[4],a[5]));
-		}else if(originalSize == 8) {
-			perm6_8DAO.save(new PERM_6_8(a[0],a[1],a[2],a[3],a[4],a[5]));
-		}else if (originalSize == 9) {
-			perm6_9DAO.save(new PERM_6_9(a[0],a[1],a[2],a[3],a[4],a[5]));
-		}else if (originalSize == 10) {
-			perm6_10DAO.save(new PERM_6_10(a[0],a[1],a[2],a[3],a[4],a[5]));
-		}else if(originalSize == 11){
-			perm6_11DAO.save(new PERM_6_11(a[0],a[1],a[2],a[3],a[4],a[5]));
-		}else if(originalSize == 12){
-			perm6_12DAO.save(new PERM_6_12(a[0],a[1],a[2],a[3],a[4],a[5]));
-		}
-	}
-
-	//Generating permutation using Heap Algorithm
-	private void heapPermutation(int a[], int size, int originalSize, int n) {
-		// if size becomes 1 then prints the obtained
-		// permutation
-		if (size == 1)
-			writeToDB(size,originalSize,a);
-
-		for (int i = 0; i < size; i++) {
-			heapPermutation(a, size - 1,originalSize, n);
-
-			// if size is odd, swap first and last
-			// element
-			if (size % 2 == 1) {
-				int temp = a[0];
-				a[0] = a[size - 1];
-				a[size - 1] = temp;
-			}
-
-			// If size is even, swap ith and last
-			// element
-			else {
-				int temp = a[i];
-				a[i] = a[size - 1];
-				a[size - 1] = temp;
+		if(modelList.size() >= 5000) {	
+			if(originalSize == 7) {
+				perm6_7DAO.save(new PERM_6_7(a[0],a[1],a[2],a[3],a[4],a[5]));
+			}else if(originalSize == 8) {
+				perm6_8DAO.save(new PERM_6_8(a[0],a[1],a[2],a[3],a[4],a[5]));
+			}else if (originalSize == 9) {
+				perm6_9DAO.save(new PERM_6_9(a[0],a[1],a[2],a[3],a[4],a[5]));
+			}else if (originalSize == 10) {
+				perm6_10DAO.saveAll(modelList);
+				modelList.clear();
+			}else if(originalSize == 11){
+				perm6_11DAO.save(new PERM_6_11(a[0],a[1],a[2],a[3],a[4],a[5]));
+			}else if(originalSize == 12){
+				perm6_12DAO.save(new PERM_6_12(a[0],a[1],a[2],a[3],a[4],a[5]));
 			}
 		}
 	}
+	
+	
+	private static void swap(int[] v, int i, int j)
+    {
+        int t = v[i];
+        v[i] = v[j];
+        v[j] = t;
+    }
+ 
+    public void permute(List<PermModel> modelList,int[] v, int n,int originalSize)
+    {
+        if (n == 1)
+        {
+        	writeToDB(modelList,originalSize,v);
+        }
+        else
+        {
+            for (int i = 0; i < n; i++)
+            {
+                permute(modelList,v, n - 1,originalSize);
+                if (n % 2 == 1)
+                {
+                    swap(v, 0, n - 1);
+                }
+                else
+                {
+                    swap(v, i, n - 1);
+                }
+            }
+        }
+    }
 	
 	public List<PermModel>  getPermutations (List<PlayerModel> myPlayersToday){
 		if(myPlayersToday.size()==1){

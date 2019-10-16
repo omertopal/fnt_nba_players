@@ -1,6 +1,17 @@
 package org.nba.players.model;
 
 public class PermModel {
+	public PermModel() {
+		
+	}
+	public PermModel(int pg, int sg, int sf, int pf, int c, int ut) {
+		this.pg = pg;
+		this.sg = sg;
+		this.sf = sf;
+		this.pf = pf;
+		this.c = c;
+		this.ut = ut;
+	}
 	
     private int pg;  
 	

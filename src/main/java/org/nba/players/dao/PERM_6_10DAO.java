@@ -1,9 +1,11 @@
 package org.nba.players.dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 
 import org.nba.players.common.CommonUtils;
@@ -22,6 +24,22 @@ public class PERM_6_10DAO implements IPERM_6_10DAO {
 	@Override
 	public void save(PERM_6_10 perm610) {
 		entityManager.persist(perm610);
+	}
+	
+	@Override
+	public void saveAll (List<PermModel> modelList) {
+		Iterator<PermModel> iterator = modelList.iterator();
+		int cont = 0;
+		while (iterator.hasNext()) {
+			PermModel model = iterator.next();
+			PERM_6_10 entity = new PERM_6_10(model.getPg(),model.getSg(),model.getSf(),model.getPf(),model.getC(),model.getUt());
+		    entityManager.persist(entity);
+		    cont++;
+		    if (cont % 100 == 0) {
+		        entityManager.flush();
+		        entityManager.clear();
+		    }
+		}
 	}
 	
 	@Override

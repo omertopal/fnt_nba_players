@@ -3,6 +3,7 @@ package org.nba.players.controller;
 import java.util.List;
 
 import org.nba.players.entity.Team;
+import org.nba.players.model.TeamModel;
 import org.nba.players.service.ITeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,9 @@ public class TeamController {
 	private ITeamService teamService;
 	
 	@GetMapping(produces = "application/json")
-	public ResponseEntity<List<Team>> getAllTeams() {
-		List<Team> list = teamService.getAllTeams();
-		return new ResponseEntity<List<Team>>(list, HttpStatus.OK);
+	public ResponseEntity<List<TeamModel>> getAllTeams() {
+		List<TeamModel> list = teamService.getAllTeams();
+		return new ResponseEntity<List<TeamModel>>(list, HttpStatus.OK);
 	}
 	
 	@GetMapping(path="/{id}",produces = "application/json")
