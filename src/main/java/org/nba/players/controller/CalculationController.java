@@ -44,7 +44,7 @@ public class CalculationController {
 		return new ResponseEntity<List<CalculationIdDTO>>(calcService.calculationIdList(), HttpStatus.OK);
 	}
 	
-	@GetMapping("/calcUsage/{method}")
+	@PostMapping("/calcUsage/{method}")
 	public ResponseEntity<List<GameDateRosterModel>> calcUsage(@PathVariable(name="method",required=true) String method) {
 		
 		if(StringUtils.isEmpty(method)){
@@ -64,7 +64,7 @@ public class CalculationController {
 	}	
 	
 	@GetMapping("/calculations/{calcId}")
-	public ResponseEntity<List<GameDateRosterModel>> getAllGameDateRosters(Integer calcId) throws Exception {
+	public ResponseEntity<List<GameDateRosterModel>> getAllGameDateRosters(@PathVariable(name="calcId",required=true) Integer calcId) throws Exception {
 		List<GameDateRosterModel> list = calcService.getAllGameDateRosters(calcId);		
 		return new ResponseEntity<List<GameDateRosterModel>>(list, HttpStatus.OK);
 	}
