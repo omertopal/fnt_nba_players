@@ -2,6 +2,10 @@ package org.nba.players.model;
 
 public class GameDateRosterEqModel {	
 	
+	public GameDateRosterEqModel () {
+		
+	}
+	
 	private int gameDateRosterId;
 	
 	private int equivalentPermId;

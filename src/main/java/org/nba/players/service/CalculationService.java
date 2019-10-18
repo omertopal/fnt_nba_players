@@ -27,11 +27,14 @@ import org.nba.players.dao.IPERM_6_8DAO;
 import org.nba.players.dao.IPERM_6_9DAO;
 import org.nba.players.dao.IPlayerDAO;
 import org.nba.players.dao.IScheduleDAO;
+import org.nba.players.dao.ITeamDAO;
 import org.nba.players.dao.SeqGameDateRostersDAO;
 import org.nba.players.dto.CalculationIdDTO;
+import org.nba.players.dto.TeamBenefitDTO;
 import org.nba.players.entity.GameDates;
 import org.nba.players.entity.Player;
 import org.nba.players.entity.Schedule;
+import org.nba.players.entity.Team;
 import org.nba.players.model.GameDateRosterEqModel;
 import org.nba.players.model.GameDateRosterModel;
 import org.nba.players.model.PermModel;
@@ -87,6 +90,85 @@ public class CalculationService implements ICalcService {
 	
 	@Autowired
 	private IPlayerDAO playerDAO;	
+	
+	@Autowired
+	private ITeamDAO teamDAO;
+	
+	@Override
+	public List<TeamBenefitDTO> getTeamBenefitList(int calcId){
+		
+		List<TeamBenefitDTO> resultList = new ArrayList<TeamBenefitDTO>();
+		List<Team> teamList = teamDAO.getAllTeams();
+		List<Schedule> teamSchedule = new ArrayList<Schedule>();
+		List<GameDateRosterModel> gameDateRosters = gameDateRostersDAO.getAllGameDateRosters(calcId);
+						
+		try {
+			for(Team team : teamList) {
+				
+				TeamBenefitDTO benefitDTO = new TeamBenefitDTO(team.getName(),0,0,0,0,0,0);
+				
+				teamSchedule = scheduleDAO.getTeamSchedule(team.getCode());		
+				
+				for (Schedule schedule: teamSchedule) {
+					List<GameDateRosterModel> filteredList = gameDateRosters.stream()
+					        .filter(roster -> roster.getGameDate().equals(schedule.getGameDate()))
+					        .collect(Collectors.toList());
+					
+					if(filteredList.size()==1) {
+						addToPositionCounts(filteredList.get(0), benefitDTO);
+					}else {
+						benefitDTO.setPgCount(benefitDTO.getPgCount()+ 1);
+						benefitDTO.setSgCount(benefitDTO.getSgCount()+ 1);
+						benefitDTO.setSfCount(benefitDTO.getSfCount()+ 1);
+						benefitDTO.setPfCount(benefitDTO.getPfCount()+ 1);
+						benefitDTO.setcCount(benefitDTO.getcCount()+ 1);
+						benefitDTO.setUtCount(benefitDTO.getUtCount()+ 1);
+					}
+				}
+				
+				resultList.add(benefitDTO);
+			}
+		}catch (Exception e) {
+			System.out.print("here");
+		}
+		
+		return resultList;
+	}
+	
+	public void addToPositionCounts (GameDateRosterModel rosterModel, TeamBenefitDTO benefitDTO) {
+		
+		int pgCount=0;
+		int sgCount=0;
+		int sfCount=0;
+		int pfCount=0;
+		int cCount=0;
+		int utCount=0;
+		
+		if(rosterModel.getPg()==0) pgCount=1;
+		if(rosterModel.getSg()==0) sgCount=1;
+		if(rosterModel.getSf()==0) sfCount=1;
+		if(rosterModel.getPf()==0) pfCount=1;
+		if(rosterModel.getC()==0) cCount=1;
+		if(rosterModel.getUt()==0) utCount=1;
+		
+		for(GameDateRosterEqModel eqModel: rosterModel.getEquivalentPermutations()) {
+			if(eqModel.getPg() ==0 ) pgCount=1;
+			if(eqModel.getSg()==0) sgCount=1;
+			if(eqModel.getSf()==0) sfCount=1;
+			if(eqModel.getPf()==0) pfCount=1;
+			if(eqModel.getC()==0) cCount=1;
+			if(eqModel.getUt()==0) utCount=1;
+		}
+		
+		benefitDTO.setPgCount(benefitDTO.getPgCount()+ pgCount);
+		benefitDTO.setSgCount(benefitDTO.getSgCount()+ sgCount);
+		benefitDTO.setSfCount(benefitDTO.getSfCount()+ sfCount);
+		benefitDTO.setPfCount(benefitDTO.getPfCount()+ pfCount);
+		benefitDTO.setcCount(benefitDTO.getcCount()+ cCount);
+		benefitDTO.setUtCount(benefitDTO.getUtCount()+ utCount);
+		
+	}
+		
 	
 	@Override
 	public List<CalculationIdDTO> calculationIdList(){

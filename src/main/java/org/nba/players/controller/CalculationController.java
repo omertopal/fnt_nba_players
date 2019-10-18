@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.nba.players.common.CommonUtils;
 import org.nba.players.dto.CalculationIdDTO;
+import org.nba.players.dto.TeamBenefitDTO;
 import org.nba.players.model.GameDateRosterModel;
 import org.nba.players.service.ICalcService;
 import org.nba.players.service.IPermService;
@@ -42,6 +43,11 @@ public class CalculationController {
 	@GetMapping("/calculationIdList")
 	public ResponseEntity<List<CalculationIdDTO>>  calculationIdList(){
 		return new ResponseEntity<List<CalculationIdDTO>>(calcService.calculationIdList(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/teamBenefitList/{calcId}")
+	public ResponseEntity<List<TeamBenefitDTO>>  getTeamBenefitList(@PathVariable(name="calcId",required=true) Integer calcId){
+		return new ResponseEntity<List<TeamBenefitDTO>>(calcService.getTeamBenefitList(calcId), HttpStatus.OK);
 	}
 	
 	@PostMapping("/calcUsage/{method}")

@@ -157,17 +157,20 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 			rosterModel.setCalcId(curRoster.getCalcId());
 			rosterModel.setRunTime(curRoster.getRunTime());
 			
-//			for(GameDateRosterEqModel eqModel : curRoster.getEquivalentPermutations()) {
-//				GameDateRostersEq equivalentEntity = new GameDateRostersEq();
-//				equivalentEntity.setEquivalentPermId(model.getEquivalentPermId());
-//				equivalentEntity.setPg(model.getPg());
-//				equivalentEntity.setSg(model.getSg());
-//				equivalentEntity.setSf(model.getSf());
-//				equivalentEntity.setPf(model.getPf());
-//				equivalentEntity.setC(model.getC());
-//				equivalentEntity.setUt(model.getUt());
-//				roster.addChild(equivalentEntity);
-//			}
+			List<GameDateRosterEqModel> equivalentPermutations = new ArrayList<GameDateRosterEqModel>();
+			for(GameDateRostersEq eqEntity : curRoster.getEquivalentList()) {
+				GameDateRosterEqModel eqModel = new GameDateRosterEqModel();
+				eqModel.setEquivalentPermId(eqEntity.getEquivalentPermId());
+				eqModel.setPg(eqEntity.getPg());
+				eqModel.setSg(eqEntity.getSg());
+				eqModel.setSf(eqEntity.getSf());
+				eqModel.setPf(eqEntity.getPf());
+				eqModel.setC(eqEntity.getC());
+				eqModel.setUt(eqEntity.getUt());
+				equivalentPermutations.add(eqModel);
+			}
+			
+			rosterModel.setEquivalentPermutations(equivalentPermutations);
 			
 			resultMap.add(rosterModel);
 		}
