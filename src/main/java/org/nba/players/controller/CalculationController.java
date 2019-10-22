@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nba.players.common.CommonUtils;
+import org.nba.players.dto.CalcUsageResult;
 import org.nba.players.dto.CalculationIdDTO;
 import org.nba.players.dto.TeamBenefitDTO;
 import org.nba.players.model.GameDateRosterModel;
@@ -51,27 +52,26 @@ public class CalculationController {
 	}
 	
 	@PostMapping("/calcUsage/{method}")
-	public ResponseEntity<List<GameDateRosterModel>> calcUsage(@PathVariable(name="method",required=true) String method) {
+	public ResponseEntity<CalcUsageResult> calcUsage(@PathVariable(name="method",required=true) String method) {
 		
 		if(StringUtils.isEmpty(method)){
 			method = CommonUtils.STANDART_METHOD;
 		}else {
 			method = method.toUpperCase();
 		}
-		
-		List<GameDateRosterModel> list = new ArrayList<GameDateRosterModel>();
+		CalcUsageResult result = new CalcUsageResult();
 		try {
-			list = calcService.getGameDateRosters(method);
+			result = calcService.getGameDateRosters(method);
 		}catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e.toString());
 		}
-		return new ResponseEntity<List<GameDateRosterModel>>(list, HttpStatus.OK);
+		return new ResponseEntity<CalcUsageResult>(result, HttpStatus.OK);
 	}	
 	
 	@GetMapping("/calculations/{calcId}")
-	public ResponseEntity<List<GameDateRosterModel>> getAllGameDateRosters(@PathVariable(name="calcId",required=true) Integer calcId) throws Exception {
-		List<GameDateRosterModel> list = calcService.getAllGameDateRosters(calcId);		
-		return new ResponseEntity<List<GameDateRosterModel>>(list, HttpStatus.OK);
+	public ResponseEntity<CalcUsageResult> getAllGameDateRosters(@PathVariable(name="calcId",required=true) Integer calcId) throws Exception {
+		CalcUsageResult result = calcService.getAllGameDateRosters(calcId);		
+		return new ResponseEntity<CalcUsageResult>(result, HttpStatus.OK);
 	}
 }

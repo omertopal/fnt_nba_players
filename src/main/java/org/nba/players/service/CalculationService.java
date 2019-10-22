@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.nba.players.common.CommonUtils;
@@ -29,7 +32,9 @@ import org.nba.players.dao.IPlayerDAO;
 import org.nba.players.dao.IScheduleDAO;
 import org.nba.players.dao.ITeamDAO;
 import org.nba.players.dao.SeqGameDateRostersDAO;
+import org.nba.players.dto.CalcUsageResult;
 import org.nba.players.dto.CalculationIdDTO;
+import org.nba.players.dto.PlayerUsageDTO;
 import org.nba.players.dto.TeamBenefitDTO;
 import org.nba.players.entity.GameDates;
 import org.nba.players.entity.Player;
@@ -177,8 +182,9 @@ public class CalculationService implements ICalcService {
 	}
 	
 	@Override
-	public List<GameDateRosterModel> getGameDateRosters(String method) throws Exception {
+	public CalcUsageResult getGameDateRosters(String method) throws Exception {
 		
+		CalcUsageResult result = new CalcUsageResult();
 		List<GameDateRosterModel> gamedateRosters = new ArrayList<GameDateRosterModel>();	
 				
 		List<Player> myPlayers = playerDAO.getMyPlayers();
@@ -204,8 +210,46 @@ public class CalculationService implements ICalcService {
 		//gameDateRostersDAO.removeAll();
 		gameDateRostersDAO.persistAll(gamedateRosters);
 		
-		return gamedateRosters;
+		result.setGameDateRosterList(gamedateRosters);
+		result.setPlayerUsageList(calculatePlayerUsage(myPlayers,gamedateRosters));
 		
+		return result;
+		
+	}
+	
+	private List<PlayerUsageDTO> calculatePlayerUsage(List<Player> myPlayers,List<GameDateRosterModel> gameDateRosters) {
+		List<PlayerUsageDTO> playerUsageList = new ArrayList<PlayerUsageDTO>();
+		
+		for(Player player: myPlayers) {
+			PlayerUsageDTO usageDto = new PlayerUsageDTO();
+			usageDto.setPlayerId(player.getId());
+			usageDto.setPlayerName(player.getName());
+			int mustHaveUsage = 0;
+			int totalUsage =0;
+			
+			for(GameDateRosterModel gameModel : gameDateRosters) {
+				
+				if(gameModel.getPg() == player.getId()) {
+					totalUsage ++;
+				}else if(gameModel.getSg() == player.getId()) {
+					totalUsage ++;
+				}else if(gameModel.getSf() == player.getId()) {
+					totalUsage ++;
+				}else if(gameModel.getPf() == player.getId()) {
+					totalUsage ++;
+				}else if(gameModel.getC() == player.getId()) {
+					totalUsage ++;
+				}else if(gameModel.getUt() == player.getId()) {
+					totalUsage ++;
+				}
+			}
+			
+			usageDto.setMustHaveUsage(mustHaveUsage);
+			usageDto.setTotalUsage(totalUsage);
+			
+			playerUsageList.add(usageDto);			
+		}
+		return playerUsageList;
 	}
 	
 	private HashMap<java.sql.Date,Integer> getGameDatesHashMap () {
@@ -354,10 +398,45 @@ public class CalculationService implements ICalcService {
 	protected synchronized int getNextCalculationId(){
 		return seqGameDateRostersDAO.getNextCalcId();
 	}
-	
-	public List<GameDateRosterModel> getAllGameDateRosters (int calcId) {
-		return gameDateRostersDAO.getAllGameDateRosters(calcId);
 		
+	public CalcUsageResult getAllGameDateRosters (int calcId) {
+		CalcUsageResult result = new CalcUsageResult();
+		List<GameDateRosterModel> gameDateRosterList = new ArrayList<GameDateRosterModel>();
+		gameDateRosterList = gameDateRostersDAO.getAllGameDateRosters(calcId);
+		result.setGameDateRosterList(gameDateRosterList);
+		
+		
+		Set<Integer> myPlayerIds = new HashSet<Integer>();
+		List<Player> myPlayers = new ArrayList<Player>();
+		for(GameDateRosterModel model : gameDateRosterList) {
+			if(!myPlayerIds.contains(model.getPg()) && model.getPg()>0){
+				myPlayerIds.add(model.getPg());
+				myPlayers.add(playerDAO.getPlayerById(model.getPg()));
+			}
+			if(!myPlayerIds.contains(model.getSg()) && model.getSg()>0){
+				myPlayerIds.add(model.getSg());
+				myPlayers.add(playerDAO.getPlayerById(model.getSg()));
+			}
+			if(!myPlayerIds.contains(model.getSf()) && model.getSf()>0){
+				myPlayerIds.add(model.getSf());
+				myPlayers.add(playerDAO.getPlayerById(model.getSf()));
+			}
+			if(!myPlayerIds.contains(model.getPf()) && model.getPf()>0){
+				myPlayerIds.add(model.getPf());
+				myPlayers.add(playerDAO.getPlayerById(model.getPf()));
+			}
+			if(!myPlayerIds.contains(model.getC()) && model.getC()>0){
+				myPlayerIds.add(model.getC());
+				myPlayers.add(playerDAO.getPlayerById(model.getC()));
+			}
+			if(!myPlayerIds.contains(model.getUt()) && model.getUt()>0){
+				myPlayerIds.add(model.getUt());
+				myPlayers.add(playerDAO.getPlayerById(model.getUt()));
+			}				
+		}
+		
+		result.setPlayerUsageList(calculatePlayerUsage(myPlayers,gameDateRosterList));
+		return result;
 	}
 	
 	private boolean isPlayerInjured(Player currentPlayer, GameDates currGameDate) {
