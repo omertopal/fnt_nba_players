@@ -35,7 +35,7 @@ public class PERM_6_10DAO implements IPERM_6_10DAO {
 			PERM_6_10 entity = new PERM_6_10(model.getPg(),model.getSg(),model.getSf(),model.getPf(),model.getC(),model.getUt());
 		    entityManager.persist(entity);
 		    cont++;
-		    if (cont % 100 == 0) {
+		    if (cont % 10000 == 0) {
 		        entityManager.flush();
 		        entityManager.clear();
 		    }

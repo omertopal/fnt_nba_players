@@ -1,12 +1,14 @@
 package org.nba.players.dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.nba.players.common.CommonUtils;
+import org.nba.players.entity.PERM_6_10;
 import org.nba.players.entity.PERM_6_9;
 import org.nba.players.model.PermModel;
 import org.springframework.stereotype.Repository;
@@ -29,6 +31,22 @@ public class PERM_6_9DAO implements IPERM_6_9DAO {
         String hql = " delete from  perm_6_9 ";
 		entityManager.createNativeQuery(hql).executeUpdate();
 		entityManager.close();
+	}
+	
+	@Override
+	public void saveAll (List<PermModel> modelList) {
+		Iterator<PermModel> iterator = modelList.iterator();
+		int cont = 0;
+		while (iterator.hasNext()) {
+			PermModel model = iterator.next();
+			PERM_6_9 entity = new PERM_6_9(model.getPg(),model.getSg(),model.getSf(),model.getPf(),model.getC(),model.getUt());
+		    entityManager.persist(entity);
+		    cont++;
+		    if (cont % 10000 == 0) {
+		        entityManager.flush();
+		        entityManager.clear();
+		    }
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

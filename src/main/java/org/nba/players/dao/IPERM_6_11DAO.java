@@ -9,4 +9,5 @@ public interface IPERM_6_11DAO {
 	List<PermModel> getAllPerm();
 	void save(PERM_6_11 perm611);
 	public void deleteAll();
+	public void saveAll (List<PermModel> modelList);
 }
