@@ -46,9 +46,10 @@ public class CalculationController {
 		return new ResponseEntity<List<CalculationIdDTO>>(calcService.calculationIdList(), HttpStatus.OK);
 	}
 	
-	@GetMapping("/teamBenefitList/{calcId}")
-	public ResponseEntity<List<TeamBenefitDTO>>  getTeamBenefitList(@PathVariable(name="calcId",required=true) Integer calcId){
-		return new ResponseEntity<List<TeamBenefitDTO>>(calcService.getTeamBenefitList(calcId), HttpStatus.OK);
+	@GetMapping("/teamBenefitList/{calcId}/{days}")
+	public ResponseEntity<List<TeamBenefitDTO>>  getTeamBenefitList(@PathVariable(name="calcId",required=true) Integer calcId,
+																	@PathVariable(name="days",required=true) Integer days){
+		return new ResponseEntity<List<TeamBenefitDTO>>(calcService.getTeamBenefitList(calcId,days), HttpStatus.OK);
 	}
 	
 	@PostMapping("/calcUsage/{method}")
@@ -69,9 +70,10 @@ public class CalculationController {
 		return new ResponseEntity<CalcUsageResult>(result, HttpStatus.OK);
 	}	
 	
-	@GetMapping("/calculations/{calcId}")
-	public ResponseEntity<CalcUsageResult> getAllGameDateRosters(@PathVariable(name="calcId",required=true) Integer calcId) throws Exception {
-		CalcUsageResult result = calcService.getAllGameDateRosters(calcId);		
+	@GetMapping("/calculations/{calcId}/{days}")
+	public ResponseEntity<CalcUsageResult> getAllGameDateRosters(@PathVariable(name="calcId",required=true) Integer calcId,
+																 @PathVariable(name="days",required=true) Integer days) throws Exception {
+		CalcUsageResult result = calcService.getAllGameDateRosters(calcId,days);		
 		return new ResponseEntity<CalcUsageResult>(result, HttpStatus.OK);
 	}
 }

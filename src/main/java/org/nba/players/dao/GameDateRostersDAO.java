@@ -100,7 +100,7 @@ public class GameDateRostersDAO implements IGameDateRostersDAO {
 	
 	public List<GameDateRosterModel> getAllGameDateRosters (int calcId){
 		
-		String hql = "FROM GameDateRosters where calcId="+calcId;		
+		String hql = "FROM GameDateRosters where calcId="+calcId+ " order by gameDate";		
 		List<GameDateRosters> rostersList = (List<GameDateRosters>) entityManager.createQuery(hql).getResultList();
 		
 		return mapToModel(rostersList);

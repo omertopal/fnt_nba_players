@@ -32,7 +32,7 @@ public class ScheduleDAO implements IScheduleDAO {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Schedule> getTeamSchedule(String teamCode) {
-		String hql = " FROM Schedule where ( home=?1 or away=?2 ) and gameDate >= CURRENT_DATE ";
+		String hql = " FROM Schedule where ( home=?1 or away=?2 ) and gameDate >= CURRENT_DATE order by gameDate";
 		
 		List<Schedule> returnList = (List<Schedule>) entityManager.createQuery(hql).setParameter(1, teamCode)
 	              .setParameter(2, teamCode).getResultList();

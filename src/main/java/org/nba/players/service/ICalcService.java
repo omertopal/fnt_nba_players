@@ -11,10 +11,10 @@ public interface ICalcService {
 	
 	CalcUsageResult getGameDateRosters(String method) throws Exception;
 	
-	public CalcUsageResult getAllGameDateRosters(int calcId) throws Exception;
+	public CalcUsageResult getAllGameDateRosters(int calcId, int days) throws Exception;
 	
 	public List<CalculationIdDTO> calculationIdList();
 	
-	public List<TeamBenefitDTO> getTeamBenefitList(int calcId);
+	public List<TeamBenefitDTO> getTeamBenefitList(int calcId, int days);
 	
 }

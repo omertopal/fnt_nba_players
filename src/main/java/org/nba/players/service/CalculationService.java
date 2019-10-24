@@ -100,13 +100,21 @@ public class CalculationService implements ICalcService {
 	private ITeamDAO teamDAO;
 	
 	@Override
-	public List<TeamBenefitDTO> getTeamBenefitList(int calcId){
+	public List<TeamBenefitDTO> getTeamBenefitList(int calcId, int days){
 		
 		List<TeamBenefitDTO> resultList = new ArrayList<TeamBenefitDTO>();
 		List<Team> teamList = teamDAO.getAllTeams();
 		List<Schedule> teamSchedule = new ArrayList<Schedule>();
 		List<GameDateRosterModel> gameDateRosters = gameDateRostersDAO.getAllGameDateRosters(calcId);
-						
+
+		Date maxGameDate = new Date();
+		List<GameDateRosterModel> gameDateRosterListByDay = new ArrayList<GameDateRosterModel>();		
+		for(int i=0; i < days; i++) {
+			gameDateRosterListByDay.add(gameDateRosters.get(i));
+			maxGameDate = gameDateRosters.get(i).getGameDate();
+			if(i+1 >= gameDateRosters.size()) break;
+		}		
+		
 		try {
 			for(Team team : teamList) {
 				
@@ -114,8 +122,9 @@ public class CalculationService implements ICalcService {
 				
 				teamSchedule = scheduleDAO.getTeamSchedule(team.getCode());		
 				
-				for (Schedule schedule: teamSchedule) {
-					List<GameDateRosterModel> filteredList = gameDateRosters.stream()
+				for (Schedule schedule: teamSchedule) {		
+					if(schedule.getGameDate().compareTo(maxGameDate)>0) break;
+					List<GameDateRosterModel> filteredList = gameDateRosterListByDay.stream()
 					        .filter(roster -> roster.getGameDate().equals(schedule.getGameDate()))
 					        .collect(Collectors.toList());
 					
@@ -128,7 +137,7 @@ public class CalculationService implements ICalcService {
 						benefitDTO.setPfCount(benefitDTO.getPfCount()+ 1);
 						benefitDTO.setcCount(benefitDTO.getcCount()+ 1);
 						benefitDTO.setUtCount(benefitDTO.getUtCount()+ 1);
-					}
+					}					
 				}
 				
 				resultList.add(benefitDTO);
@@ -399,16 +408,24 @@ public class CalculationService implements ICalcService {
 		return seqGameDateRostersDAO.getNextCalcId();
 	}
 		
-	public CalcUsageResult getAllGameDateRosters (int calcId) {
+	public CalcUsageResult getAllGameDateRosters (int calcId,int days) {
 		CalcUsageResult result = new CalcUsageResult();
 		List<GameDateRosterModel> gameDateRosterList = new ArrayList<GameDateRosterModel>();
 		gameDateRosterList = gameDateRostersDAO.getAllGameDateRosters(calcId);
-		result.setGameDateRosterList(gameDateRosterList);
+		
+		List<GameDateRosterModel> gameDateRosterListByDay = new ArrayList<GameDateRosterModel>();
+		
+		for(int i=0; i < days; i++) {
+			gameDateRosterListByDay.add(gameDateRosterList.get(i));
+			if(i+1 >= gameDateRosterList.size()) break;
+		}		
+		
+		result.setGameDateRosterList(gameDateRosterListByDay);
 		
 		
 		Set<Integer> myPlayerIds = new HashSet<Integer>();
 		List<Player> myPlayers = new ArrayList<Player>();
-		for(GameDateRosterModel model : gameDateRosterList) {
+		for(GameDateRosterModel model : gameDateRosterListByDay) {
 			if(!myPlayerIds.contains(model.getPg()) && model.getPg()>0){
 				myPlayerIds.add(model.getPg());
 				myPlayers.add(playerDAO.getPlayerById(model.getPg()));
@@ -435,7 +452,7 @@ public class CalculationService implements ICalcService {
 			}				
 		}
 		
-		result.setPlayerUsageList(calculatePlayerUsage(myPlayers,gameDateRosterList));
+		result.setPlayerUsageList(calculatePlayerUsage(myPlayers,gameDateRosterListByDay));
 		return result;
 	}
 	
