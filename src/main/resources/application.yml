@@ -13,7 +13,7 @@ spring:
     validationQuery: SELECT 1
     driver-class-name: com.mysql.jdbc.Driver
     initialization-mode: always
-    data: classpath:permutations2.sql
+    #data: classpath:permutations2.sql
     data: classpath:players_teams_schedule.sql, classpath:permutations1.sql, classpath:permutations2.sql
   jpa:
     hibernate:
